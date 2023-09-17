@@ -72,6 +72,8 @@ export function main(){
 
     function prepare_images(){
         const MAP_CHIP_IMG_PATH = "../img/map_chip.png";
+        const BLACK_WINDOW_IMG_PATH = "../img/black_window.png";
+        const TRIANGLE_RIGHT_IMG_PATH = "../img/triangle_right.png"
         const YUUSHA_FRONT1_IMG_PATH = "../img/yuusha_front1.png";
         const YUUSHA_FRONT2_IMG_PATH = "../img/yuusha_front2.png";
         const YUUSHA_BACK1_IMG_PATH = "../img/yuusha_back1.png";
@@ -84,6 +86,8 @@ export function main(){
         // 画像をロードして、辞書型データ形式で返却
         return {
             map_chip: generate_img_object(MAP_CHIP_IMG_PATH),
+            black_window: generate_img_object(BLACK_WINDOW_IMG_PATH),
+            triangle_right: generate_img_object(TRIANGLE_RIGHT_IMG_PATH),
             yuusha_front1: generate_img_object(YUUSHA_FRONT1_IMG_PATH),
             yuusha_front2: generate_img_object(YUUSHA_FRONT2_IMG_PATH),
             yuusha_back1: generate_img_object(YUUSHA_BACK1_IMG_PATH),

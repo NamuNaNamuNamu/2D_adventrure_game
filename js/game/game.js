@@ -4,8 +4,8 @@ import { start } from "./start.js";
 import { change_screen_to } from "./common_function/change_screen_to.js";
 import { canvas_initialize } from "./../global_function/canvas_initialize.js";
 
-export function setting(global_info){
-    console.log("設定画面")
+export function game(global_info){
+    console.log("ゲーム画面")
     let main_loop = setInterval(function(){
         // canvas をリセット
         canvas_initialize(global_info.canvas, global_info.context);
