@@ -15,18 +15,26 @@ export function main(){
     canvas_initialize(canvas, context);
     // 画面の大きさが変更されたときに canvas サイズをリサイズするようにする
     start_automatic_screen_size_correction(canvas, context);
+
+    // 画像の用意 // NOTE: 先に画像を用意しておかないと読み込みに時間がかかる
+    let img = prepare_images();
+
     // 入力情報をまとめてもっておく key オブジェクトを用意
     let key = new Key();
     // 入力の受付を開始する
     start_receiving_input(key);
 
-    // スタート画面の描画を開始する
+    // ゲームの処理に必要な情報をまとめる
     let global_info = {
         canvas: canvas,
         context: context,
         key: key,
+        img: img,
     }
-    game.start(global_info);
+    // 最後の画像 (yuusha_right2) の読み込みが完了したら、スタート画面の描画を開始する
+    global_info.img.yuusha_right2.addEventListener("load", function(){
+        game.start(global_info);
+    }, false);
 
     function determine_canvas_size(canvas){
         /*
@@ -39,9 +47,11 @@ export function main(){
         // 画面めいっぱいになるような canvas の 1辺のサイズを決める
         if(document.documentElement.clientWidth > document.documentElement.clientHeight){
             one_side = document.documentElement.clientHeight * CANVAS_SIZE_RATIO;
+            one_side = one_side - one_side % 16;
         }
         else{
             one_side = document.documentElement.clientWidth * CANVAS_SIZE_RATIO;
+            one_side = one_side - one_side % 16;
         }
 
         canvas.width = one_side;
@@ -58,6 +68,41 @@ export function main(){
             determine_canvas_size(canvas);
             canvas_initialize(canvas, context);
         }, false);
+    }
+
+    function prepare_images(){
+        const MAP_CHIP_IMG_PATH = "../img/map_chip.png";
+        const BLACK_WINDOW_IMG_PATH = "../img/black_window.png";
+        const TRIANGLE_RIGHT_IMG_PATH = "../img/triangle_right.png"
+        const YUUSHA_FRONT1_IMG_PATH = "../img/yuusha_front1.png";
+        const YUUSHA_FRONT2_IMG_PATH = "../img/yuusha_front2.png";
+        const YUUSHA_BACK1_IMG_PATH = "../img/yuusha_back1.png";
+        const YUUSHA_BACK2_IMG_PATH = "../img/yuusha_back2.png";
+        const YUUSHA_LEFT1_IMG_PATH = "../img/yuusha_left1.png";
+        const YUUSHA_LEFT2_IMG_PATH = "../img/yuusha_left2.png";
+        const YUUSHA_RIGHT1_IMG_PATH = "../img/yuusha_right1.png";
+        const YUUSHA_RIGHT2_IMG_PATH = "../img/yuusha_right2.png";
+        
+        // 画像をロードして、辞書型データ形式で返却
+        return {
+            map_chip: generate_img_object(MAP_CHIP_IMG_PATH),
+            black_window: generate_img_object(BLACK_WINDOW_IMG_PATH),
+            triangle_right: generate_img_object(TRIANGLE_RIGHT_IMG_PATH),
+            yuusha_front1: generate_img_object(YUUSHA_FRONT1_IMG_PATH),
+            yuusha_front2: generate_img_object(YUUSHA_FRONT2_IMG_PATH),
+            yuusha_back1: generate_img_object(YUUSHA_BACK1_IMG_PATH),
+            yuusha_back2: generate_img_object(YUUSHA_BACK2_IMG_PATH),
+            yuusha_left1: generate_img_object(YUUSHA_LEFT1_IMG_PATH),
+            yuusha_left2: generate_img_object(YUUSHA_LEFT2_IMG_PATH),
+            yuusha_right1: generate_img_object(YUUSHA_RIGHT1_IMG_PATH),
+            yuusha_right2: generate_img_object(YUUSHA_RIGHT2_IMG_PATH),
+        }
+
+        function generate_img_object(img_path){
+            let img = new Image();
+            img.src = img_path;
+            return img;
+        }
     }
 
     function start_receiving_input(key){
