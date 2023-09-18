@@ -151,7 +151,7 @@ export function start(global_info){
             x: 0.5, 
             y: 0.8,
         };
-        const COEFFICIENT_OF_SIZE_IN_CANVAS = 0.3; // canvas 上でのウィンドウサイズ係数
+        const COEFFICIENT_OF_SIZE_IN_CANVAS = 0.0005; // canvas 上でのウィンドウサイズ係数
 
         draw_black_window(canvas, context, black_window);
         draw_text_in_window(canvas, context);
@@ -169,20 +169,20 @@ export function start(global_info){
                 0,  // sy (元画像の切り抜き始点 y)
                 BLACK_WINDOW.width,  // s_width (元画像の切り抜きサイズ 横幅)
                 BLACK_WINDOW.height,  // s_height (元画像の切り抜きサイズ 縦幅)
-                canvas.width * AXIS.x - (BLACK_WINDOW.width * COEFFICIENT_OF_SIZE_IN_CANVAS) * 0.5,  // dx (canvas の描画開始位置 x)
-                canvas.height * AXIS.y - (BLACK_WINDOW.height * COEFFICIENT_OF_SIZE_IN_CANVAS) * 0.5,  // dy (canvas の描画開始位置 y)
-                BLACK_WINDOW.width * COEFFICIENT_OF_SIZE_IN_CANVAS,  // d_width (canvas の描画サイズ 横幅)
-                BLACK_WINDOW.height * COEFFICIENT_OF_SIZE_IN_CANVAS,  // d_height (canvas の描画サイズ 縦幅)
+                canvas.width * AXIS.x - (BLACK_WINDOW.width * canvas.width * COEFFICIENT_OF_SIZE_IN_CANVAS) * 0.5,  // dx (canvas の描画開始位置 x)
+                canvas.height * AXIS.y - (BLACK_WINDOW.height * canvas.height * COEFFICIENT_OF_SIZE_IN_CANVAS) * 0.5,  // dy (canvas の描画開始位置 y)
+                BLACK_WINDOW.width * canvas.width * COEFFICIENT_OF_SIZE_IN_CANVAS,  // d_width (canvas の描画サイズ 横幅)
+                BLACK_WINDOW.height * canvas.height * COEFFICIENT_OF_SIZE_IN_CANVAS,  // d_height (canvas の描画サイズ 縦幅)
             );
         }
 
         function draw_text_in_window(canvas, context){
             context.fillStyle = "rgb(255,255,255)";
             context.textAlign = "center";
-            context.font = `${canvas.width * COEFFICIENT_OF_SIZE_IN_CANVAS * 0.12}px serif`;
+            context.font = `${canvas.width * COEFFICIENT_OF_SIZE_IN_CANVAS * 72}px serif`;
             
-            context.fillText("はじめる", canvas.width * 0.3, canvas.height * 0.82);
-            context.fillText("せってい", canvas.width * 0.7, canvas.height * 0.82);
+            context.fillText("はじめる", canvas.width * 0.32, canvas.height * 0.82);
+            context.fillText("せってい", canvas.width * 0.68, canvas.height * 0.82);
         }
 
         function draw_pointer(canvas, context, triangle_right, selected){
@@ -198,23 +198,23 @@ export function start(global_info){
             // selected 情報に合わせて、描画位置を変える
             if(selected.start){
                 pointer_axis = {
-                    x: 0.18, // canvas 上での位置。0 ~ 1 の間で決定
-                    y: 0.78, // canvas 上での位置。0 ~ 1 の間で決定
+                    x: 0.22, // canvas 上での位置。0 ~ 1 の間で決定
+                    y: 0.805, // canvas 上での位置。0 ~ 1 の間で決定
                 }
             }
             if(selected.setting){
                 pointer_axis = {
                     x: 0.58, // canvas 上での位置。0 ~ 1 の間で決定
-                    y: 0.78, // canvas 上での位置。0 ~ 1 の間で決定
+                    y: 0.805, // canvas 上での位置。0 ~ 1 の間で決定
                 }
             }
             
             context.drawImage(
                 triangle_right, // img
-                canvas.width * pointer_axis.x - COEFFICIENT_OF_SIZE_IN_CANVAS * 0.5,  // dx (canvas の描画開始位置 x)
-                canvas.height * pointer_axis.y - COEFFICIENT_OF_SIZE_IN_CANVAS * 0.5,  // dy (canvas の描画開始位置 y)
-                COEFFICIENT_OF_SIZE_IN_CANVAS * 90,  // d_width (canvas の描画サイズ 横幅)
-                COEFFICIENT_OF_SIZE_IN_CANVAS * 90,  // d_height (canvas の描画サイズ 縦幅)
+                canvas.width * pointer_axis.x - canvas.width * COEFFICIENT_OF_SIZE_IN_CANVAS * 93.75 * 0.5,  // dx (canvas の描画開始位置 x)
+                canvas.height * pointer_axis.y - canvas.height * COEFFICIENT_OF_SIZE_IN_CANVAS * 93.75 * 0.5,  // dy (canvas の描画開始位置 y)
+                canvas.width * COEFFICIENT_OF_SIZE_IN_CANVAS * 93.75,  // d_width (canvas の描画サイズ 横幅)
+                canvas.height * COEFFICIENT_OF_SIZE_IN_CANVAS * 93.75,  // d_height (canvas の描画サイズ 縦幅)
             );
         }
     }
