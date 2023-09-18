@@ -52,7 +52,7 @@ export function start(global_info){
 
     function draw_background(canvas, context, img){
         /*
-        10 × 10 のサイズを持つサンプルマップを背景に描画する
+        16 × 16 のサイズを持つサンプルマップを背景に描画する
         */
 
         const TOP_LEFT_CORNER_AXIS = {          // マップチップ本体の左上端
@@ -63,7 +63,6 @@ export function start(global_info){
             width: 32,  // マップチップ画像上でのマップチップ 1つ分の幅
             height: 32, // マップチップ画像上でのマップチップ 1つ分の幅
         }
-        const FIELD_SIZE_IN_SCREEN = 16; // 1 画面に収まる タイル の数
         const TILE_SIZE_IN_CANVAS = canvas.width / FIELD_SIZE_IN_SCREEN // 1 タイルの canvas 上でののサイズ
 
         let map_data = get_map_data();
