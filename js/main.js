@@ -73,7 +73,11 @@ export function main(){
     function prepare_images(){
         const MAP_CHIP_IMG_PATH = "../img/map_chip.png";
         const BLACK_WINDOW_IMG_PATH = "../img/black_window.png";
-        const TRIANGLE_RIGHT_IMG_PATH = "../img/triangle_right.png"
+        const TRIANGLE_RIGHT_IMG_PATH = "../img/triangle_right.png";
+        const ARROW_UP_IMG_PATH = "../img/arrow_up.png";
+        const ARROW_DOWN_IMG_PATH = "../img/arrow_down.png";
+        const ARROW_LEFT_IMG_PATH = "../img/arrow_left.png";
+        const ARROW_RIGHT_IMG_PATH = "../img/arrow_right.png";
         const YUUSHA_FRONT1_IMG_PATH = "../img/yuusha_front1.png";
         const YUUSHA_FRONT2_IMG_PATH = "../img/yuusha_front2.png";
         const YUUSHA_BACK1_IMG_PATH = "../img/yuusha_back1.png";
@@ -88,6 +92,10 @@ export function main(){
             map_chip: generate_img_object(MAP_CHIP_IMG_PATH),
             black_window: generate_img_object(BLACK_WINDOW_IMG_PATH),
             triangle_right: generate_img_object(TRIANGLE_RIGHT_IMG_PATH),
+            arrow_up: generate_img_object(ARROW_UP_IMG_PATH),
+            arrow_down: generate_img_object(ARROW_DOWN_IMG_PATH),
+            arrow_left: generate_img_object(ARROW_LEFT_IMG_PATH),
+            arrow_right: generate_img_object(ARROW_RIGHT_IMG_PATH),
             yuusha_front1: generate_img_object(YUUSHA_FRONT1_IMG_PATH),
             yuusha_front2: generate_img_object(YUUSHA_FRONT2_IMG_PATH),
             yuusha_back1: generate_img_object(YUUSHA_BACK1_IMG_PATH),
