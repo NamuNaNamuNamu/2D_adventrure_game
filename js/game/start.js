@@ -9,7 +9,7 @@ export function start(global_info){
     let selected = {    // 選択されている項目
         start: true,
         setting: false,
-    }
+    };
 
     // メインループ
     let main_loop = setInterval(function(){
@@ -40,13 +40,13 @@ export function start(global_info){
             selected = {
                 start: true,    // ポインタを「はじめる」に合わせる
                 setting: false,
-            }
+            };
         }
         if(key.is_d_pressed){
             selected = {
                 start: false,
                 setting: true,  // ポインタを「せってい」に合わせる
-            }
+            };
         }
     }
 
@@ -58,12 +58,12 @@ export function start(global_info){
         const TOP_LEFT_CORNER_AXIS = {          // マップチップ本体の左上端
             x: 8,
             y: 24,
-        }
+        };
         const TILE = {
             width: 32,  // マップチップ画像上でのマップチップ 1つ分の幅
             height: 32, // マップチップ画像上でのマップチップ 1つ分の幅
-        }
-        const TILE_SIZE_IN_CANVAS = canvas.width / FIELD_SIZE_IN_SCREEN // 1 タイルの canvas 上でののサイズ
+        };
+        const TILE_SIZE_IN_CANVAS = canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でののサイズ
 
         let map_data = get_map_data();
         draw_map(map_data);
@@ -106,7 +106,7 @@ export function start(global_info){
                 [8, 8, 8, 0, 0, 0, 0, 0, 0, 15, 15, 7, 15, 15, 15, 15],
                 [8, 14, 14, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14, 8],
                 [8, 0, 0, 0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
-            ]
+            ];
         }
 
         function draw_map(map_data){
@@ -161,7 +161,7 @@ export function start(global_info){
             const BLACK_WINDOW = { // pngファイル上での黒ウィンドウのサイズ
                 width: black_window.naturalWidth,
                 height: black_window.naturalHeight * 0.25, // pngファイルの上部 1 / 4 に黒ウィンドウがある
-            }
+            };
             
             context.drawImage(
                 black_window, // img
@@ -193,20 +193,20 @@ export function start(global_info){
             let pointer_axis = {
                 x: 0, // canvas 上での位置。0 ~ 1 の間で決定
                 y: 0, // canvas 上での位置。0 ~ 1 の間で決定
-            }
+            };
 
             // selected 情報に合わせて、描画位置を変える
             if(selected.start){
                 pointer_axis = {
                     x: 0.22, // canvas 上での位置。0 ~ 1 の間で決定
                     y: 0.805, // canvas 上での位置。0 ~ 1 の間で決定
-                }
+                };
             }
             if(selected.setting){
                 pointer_axis = {
                     x: 0.58, // canvas 上での位置。0 ~ 1 の間で決定
                     y: 0.805, // canvas 上での位置。0 ~ 1 の間で決定
-                }
+                };
             }
             
             context.drawImage(

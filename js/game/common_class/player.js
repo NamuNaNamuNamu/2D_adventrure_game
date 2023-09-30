@@ -19,7 +19,7 @@ export class Player{
         this.in_action_frame = {
             move: 0,                        // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
             attack: 0,                      // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
-        }
+        };
         this.arrows = [];                   // 放った弓矢
     }
 

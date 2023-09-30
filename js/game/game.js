@@ -17,11 +17,11 @@ export function game(global_info){
             left: global_info.img.arrow_left,
             right: global_info.img.arrow_right,
         },
-    }
+    };
     let player = new Player(8, 8, INITIAL_WORLD_MAP_X, INITIAL_WORLD_MAP_Y, player_img); // プレイヤーキャラクター
 
     let main_loop = setInterval(function(){
-        const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN // 1 タイルの canvas 上でののサイズ
+        const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でののサイズ
 
         // canvas をリセット
         canvas_initialize(global_info.canvas, global_info.context);
@@ -32,7 +32,7 @@ export function game(global_info){
         player.action();
         // 描画する
         player.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
-        
+
         // Shift ボタンが押されたら、スタート画面に遷移
         if(global_info.key.is_shift_pressed){
             change_screen_to(start, main_loop, global_info);
