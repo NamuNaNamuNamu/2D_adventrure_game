@@ -8,9 +8,11 @@ const ATTACK_COOL_TIME = 10; // 攻撃クールタイム
 export class Player{
     
     // コンストラクタ
-    constructor(x, y, img){
+    constructor(x, y, world_map_x, world_map_y, img){
         this.x = x;                         // x 座標(タイル基準 = 一番左が 1, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 1, 一番下が 16), プレイヤーの画像の中心の座標とする
+        this.world_map_x = world_map_x;     // ワールドマップの x 座標
+        this.world_map_y = world_map_y;     // ワールドマップの y 座標
         this.img = img;                     // 写真 (front: 正面, back: 背面, left: 左, right: 右)
         this.direction = 0;                 // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.animation_frame = 0;           // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
@@ -82,6 +84,24 @@ export class Player{
             this.y = Math.round(this.y * 2) * 0.5;
             // アニメーションを 1 動かす(0 なら 1 に。1 なら 0 に)
             this.animation_frame = (this.animation_frame + 1) % 2;
+        }
+
+        // マップ移動処理
+        if(this.x < 0){
+            this.x += FIELD_SIZE_IN_SCREEN;
+            this.world_map_x--;
+        }
+        if(this.x > FIELD_SIZE_IN_SCREEN){
+            this.x -= FIELD_SIZE_IN_SCREEN;
+            this.world_map_x++;
+        }
+        if(this.y < 0){
+            this.y += FIELD_SIZE_IN_SCREEN;
+            this.world_map_y--;
+        }
+        if(this.y > FIELD_SIZE_IN_SCREEN){
+            this.y -= FIELD_SIZE_IN_SCREEN;
+            this.world_map_y++;
         }
     }
 

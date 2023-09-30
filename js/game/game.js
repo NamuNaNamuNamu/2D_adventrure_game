@@ -18,7 +18,7 @@ export function game(global_info){
             right: global_info.img.arrow_right,
         },
     }
-    let player = new Player(8, 8, player_img); // プレイヤーキャラクター
+    let player = new Player(8, 8, INITIAL_WORLD_MAP_X, INITIAL_WORLD_MAP_Y, player_img); // プレイヤーキャラクター
 
     let main_loop = setInterval(function(){
         const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN // 1 タイルの canvas 上でののサイズ
