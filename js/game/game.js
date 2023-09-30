@@ -4,6 +4,8 @@ import { start } from "./start.js";
 import { change_screen_to } from "./common_function/change_screen_to.js";
 import { canvas_initialize } from "./../global_function/canvas_initialize.js";
 import { Player } from "./common_class/player.js";
+import { world_map } from "./common_function/world_map.js";
+import { draw_map } from "./common_function/draw_map.js";
 
 export function game(global_info){
     let player_img = {
@@ -25,6 +27,9 @@ export function game(global_info){
 
         // canvas をリセット
         canvas_initialize(global_info.canvas, global_info.context);
+
+        // マップを描画する
+        draw_map(world_map()[player.world_map_x][player.world_map_y], global_info.canvas, global_info.context, global_info.img.map_chip);
 
         // プレイヤーの操作をプレイヤーキャラに反映
         player.control(global_info.key);

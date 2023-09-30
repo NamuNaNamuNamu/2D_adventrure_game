@@ -11,8 +11,8 @@ export class Player{
     constructor(x, y, world_map_x, world_map_y, img){
         this.x = x;                         // x 座標(タイル基準 = 一番左が 1, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 1, 一番下が 16), プレイヤーの画像の中心の座標とする
-        this.world_map_x = world_map_x;     // ワールドマップの x 座標
-        this.world_map_y = world_map_y;     // ワールドマップの y 座標
+        this.world_map_x = world_map_x;     // 現在プレイヤーがいる ワールドマップの x 座標
+        this.world_map_y = world_map_y;     // 現在プレイヤーがいる ワールドマップの y 座標
         this.img = img;                     // 写真 (front: 正面, back: 背面, left: 左, right: 右)
         this.direction = 0;                 // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.animation_frame = 0;           // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
