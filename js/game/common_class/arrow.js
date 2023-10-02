@@ -9,16 +9,16 @@ export class Arrow{
         this.img = img;                 // 写真 (up: 上, down: 下, left: 左, right: 右)
     }
 
-    move(arrows, tile_size_in_canvas){
+    move(arrows){
         if(this.direction == 0) this.y = Math.round((this.y - MINIMUM_STEP * ARROW_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 1) this.y = Math.round((this.y + MINIMUM_STEP * ARROW_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 2) this.x = Math.round((this.x - MINIMUM_STEP * ARROW_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 3) this.x = Math.round((this.x + MINIMUM_STEP * ARROW_SPEED_COEFFICIENT) * 100) / 100;
         // もし、場外に出たら、弓矢を削除
-        if(this.x < 0 - tile_size_in_canvas * 0.5 || 
-        this.x > FIELD_SIZE_IN_SCREEN + tile_size_in_canvas * 0.5 || 
-        this.y < 0 - tile_size_in_canvas * 0.5 || 
-        this.y > FIELD_SIZE_IN_SCREEN + tile_size_in_canvas * 0.5){
+        if(this.x < -0.5 || 
+        this.x > FIELD_SIZE_IN_SCREEN + 0.5 || 
+        this.y < -0.5 || 
+        this.y > FIELD_SIZE_IN_SCREEN + 0.5){
             arrows.splice(arrows.indexOf(this), 1);
         }
     }
