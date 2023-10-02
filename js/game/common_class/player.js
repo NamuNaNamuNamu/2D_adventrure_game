@@ -4,6 +4,7 @@ import { Arrow } from "./arrow.js";
 import { world_map } from "./../common_function/world_map.js";
 
 const PLAYER_SPEED_COEFFICIENT = 0.33;    // プレイヤーのスピードの係数
+const MOVE_COOL_TIME = 3; // 移動クールタイム（1歩で 3フレーム費やす）
 const ATTACK_COOL_TIME = 10; // 攻撃クールタイム
 const MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON = [ // プレイヤーが移動できない床
     2,  // 海
@@ -34,28 +35,29 @@ export class Player{
     }
 
     // プレイヤーの操作を反映
+    // direction と、in_action_frame.move, in_action_frame.attack を変更し、行動の準備をする。
     control(key){
         // 移動アクション中でなければ、操作を受け付ける
         if(this.in_action_frame.move <= 0){
             // w, a, s, d キー入力に応じて移動させる
             if(key.is_w_pressed){ 
                 this.direction = 0; // 上方向
-                this.in_action_frame.move = 3; // 3フレーム使って実際には移動する
+                this.in_action_frame.move = MOVE_COOL_TIME;
                 this.check_movability(); // 上方向に移動可能かどうか確かめる
             }
             else if(key.is_s_pressed){
                 this.direction = 1; // 下方向
-                this.in_action_frame.move = 3; // 3フレーム使って実際には移動する
+                this.in_action_frame.move = MOVE_COOL_TIME;
                 this.check_movability(); // 下方向に移動可能かどうか確かめる
             }
             else if(key.is_a_pressed){
                 this.direction = 2; // 左方向
-                this.in_action_frame.move = 3; // 3フレーム使って実際には移動する
+                this.in_action_frame.move = MOVE_COOL_TIME;
                 this.check_movability(); // 左方向に移動可能かどうか確かめる
             }
             else if(key.is_d_pressed){
                 this.direction = 3; // 右方向
-                this.in_action_frame.move = 3; // 3フレーム使って実際には移動する
+                this.in_action_frame.move = MOVE_COOL_TIME;
                 this.check_movability(); // 右方向に移動可能かどうか確かめる
             }
         }
@@ -70,6 +72,7 @@ export class Player{
 
     // 進もうとしている方向に進めるかどうか確かめる
     // 進めない例: 移動しようとしている方向に、移動できない床がある場合など。
+    // 進めない場合、ここで、in_action_frame.move を 0 にすることで、移動を中止する
     check_movability(){
         // 現在プレイヤーが居るマップ
         let current_map = world_map()[this.world_map_x][this.world_map_y];
@@ -170,6 +173,8 @@ export class Player{
         this.attack();
     }
 
+    // 弓矢とプレイヤーキャラを実際に動かす。
+    // 弓矢は問答無用で動くが、プレイヤーキャラは、in_action_frame.move が 1 以上のときに移動する
     move(){
         // 弓矢を動かす
         for(let arrow of this.arrows){
@@ -215,6 +220,7 @@ export class Player{
         }
     }
 
+    // プレイヤーの攻撃命令 を受けて、弓矢を生成する
     attack(){
         // アクションが終了したら、動作は行わない
         if(this.in_action_frame.attack <= 0) return;
