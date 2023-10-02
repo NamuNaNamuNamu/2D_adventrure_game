@@ -9,6 +9,7 @@ export class Arrow{
         this.img = img;                 // 写真 (up: 上, down: 下, left: 左, right: 右)
     }
 
+    // 弓矢の移動処理
     move(arrows){
         if(this.direction == 0) this.y = Math.round((this.y - MINIMUM_STEP * ARROW_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 1) this.y = Math.round((this.y + MINIMUM_STEP * ARROW_SPEED_COEFFICIENT) * 100) / 100;
@@ -23,6 +24,7 @@ export class Arrow{
         }
     }
 
+    // 弓矢の描画処理
     draw(canvas, context, tile_size_in_canvas){
         let arrow_img;
         if(this.direction == 0) arrow_img = this.img.up;
