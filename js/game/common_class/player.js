@@ -207,18 +207,22 @@ export class Player{
         if(this.x < 0){
             this.x += FIELD_SIZE_IN_SCREEN;
             this.world_map_x--;
+            this.arrows = [];   // マップ移動したら、弓矢は全て消す
         }
         if(this.x > FIELD_SIZE_IN_SCREEN){
             this.x -= FIELD_SIZE_IN_SCREEN;
             this.world_map_x++;
+            this.arrows = [];   // マップ移動したら、弓矢は全て消す
         }
         if(this.y < 0){
             this.y += FIELD_SIZE_IN_SCREEN;
             this.world_map_y--;
+            this.arrows = [];   // マップ移動したら、弓矢は全て消す
         }
         if(this.y > FIELD_SIZE_IN_SCREEN){
             this.y -= FIELD_SIZE_IN_SCREEN;
             this.world_map_y++;
+            this.arrows = [];   // マップ移動したら、弓矢は全て消す
         }
     }
 
