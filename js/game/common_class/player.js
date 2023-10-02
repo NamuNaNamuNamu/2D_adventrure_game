@@ -19,7 +19,7 @@ const MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON = [ // プレイヤーが移動でき
 export class Player{
     
     // コンストラクタ
-    constructor(x, y, world_map_x, world_map_y, img){
+    constructor(x, y, world_map_x, world_map_y, img, hp){
         this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
         this.world_map_x = world_map_x;     // 現在プレイヤーがいる ワールドマップの x 座標
@@ -31,6 +31,8 @@ export class Player{
             move: 0,                        // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
             attack: 0,                      // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
         };
+        this.hp = hp * 0.4;                 // HP
+        this.max_hp = hp;                   // 最大HP
         this.arrows = [];                   // 放った弓矢
     }
 
@@ -75,7 +77,7 @@ export class Player{
     // 進めない場合、ここで、in_action_frame.move を 0 にすることで、移動を中止する
     check_movability(){
         // 現在プレイヤーが居るマップ
-        let current_map = world_map()[this.world_map_x][this.world_map_y];
+        let current_map = world_map()[this.world_map_y][this.world_map_x];
         let player_x = this.x - 0.5; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
         let player_y = this.y - 0.5; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
 
@@ -255,6 +257,48 @@ export class Player{
             this.y * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dy (canvas の描画開始位置 y)
             tile_size_in_canvas,  // d_width (canvas の描画サイズ 横幅)
             tile_size_in_canvas,  // d_height (canvas の描画サイズ 縦幅)
+        );
+
+        // HPバーの描画
+        const HP_BAR_WIDTH_COEFFICIENT = 0.25;              // HPバーの幅に係る係数
+        const HP_BAR_HEIGHT_COEFFICIENT = 0.015;            // HPバーの高さに係る係数
+        const HP_BAR_OUTSIDE_WIDTH_COEFFICIENT = 1;         // HPバーの外側の白い部分の横のサイズ比
+        const HP_BAR_OUTSIDE_HEIGHT_COEFFICIENT = 1;        // HPバーの外側の白い部分の縦のサイズ比
+        const HP_BAR_INSIDE_WIDTH_COEFFICIENT = 0.96;       // HPバーの内側の赤い部分の横のサイズ比
+        const HP_BAR_INSIDE_HEIGHT_COEFFICIENT = 0.4;       // HPバーの内側の赤い部分の縦のサイズ比
+
+        const HP_BAR_X = 0.14;  // canvas の横幅を 1 としたときの HPバーの横の中心 x座標
+        const HP_BAR_Y = 0.02;  // canvas の縦幅を 1 としたときの HPバーの横の中心 y座標
+        const OUTSIDE_WIDTH = canvas.width * HP_BAR_WIDTH_COEFFICIENT * HP_BAR_OUTSIDE_WIDTH_COEFFICIENT;       // HPバーの外側横幅
+        const OUTSIDE_HEIGHT = canvas.height * HP_BAR_HEIGHT_COEFFICIENT * HP_BAR_OUTSIDE_HEIGHT_COEFFICIENT;   // HPバーの外側縦幅
+        const INSIDE_WIDTH = canvas.width * HP_BAR_WIDTH_COEFFICIENT * HP_BAR_INSIDE_WIDTH_COEFFICIENT;         // HPバーの内側の横幅
+        const INSIDE_HEIGHT = canvas.height * HP_BAR_HEIGHT_COEFFICIENT * HP_BAR_INSIDE_HEIGHT_COEFFICIENT;     // HPバーの内側の縦幅
+
+        // 外側の白い部分
+        context.fillStyle = "rgb(255, 255, 255)";
+        context.fillRect(
+            canvas.width * HP_BAR_X - OUTSIDE_WIDTH * 0.5,
+            canvas.height * HP_BAR_Y - OUTSIDE_HEIGHT * 0.5,
+            OUTSIDE_WIDTH,
+            OUTSIDE_HEIGHT,
+        );
+
+        // HPバーの内側の赤色の部分
+        context.fillStyle = "rgb(215, 0, 0)";
+        context.fillRect(
+            canvas.width * HP_BAR_X - INSIDE_WIDTH * 0.5,
+            canvas.height * HP_BAR_Y - INSIDE_HEIGHT * 0.5,
+            INSIDE_WIDTH,
+            INSIDE_HEIGHT,
+        );
+
+        // HPバーの内側の緑色の部分
+        context.fillStyle = "rgb(0, 185, 0)";
+        context.fillRect(
+            canvas.width * HP_BAR_X - INSIDE_WIDTH * 0.5,
+            canvas.height * HP_BAR_Y - INSIDE_HEIGHT * 0.5,
+            INSIDE_WIDTH * (this.hp / this.max_hp),
+            INSIDE_HEIGHT,
         );
     }
 }

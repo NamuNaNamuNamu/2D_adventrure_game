@@ -20,7 +20,14 @@ export function game(global_info){
             right: global_info.img.arrow_right,
         },
     };
-    let player = new Player(8, 8, INITIAL_WORLD_MAP_X, INITIAL_WORLD_MAP_Y, player_img); // プレイヤーキャラクター
+    let player = new Player( // プレイヤーキャラクター
+        8,                      // x 座標(タイル基準 = 一番左が 0, 一番右が 16)
+        8,                      // y 座標(タイル基準 = 一番上が 0, 一番下が 16)
+        INITIAL_WORLD_MAP_X,    // 初期リスポーンする、ワールドマップの x 座標
+        INITIAL_WORLD_MAP_Y,    // 初期リスポーンする、ワールドマップの y 座標
+        player_img,             // プレイヤーキャラの写真
+        100,                    // 最大HP
+    );
 
     let main_loop = setInterval(function(){
         const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でののサイズ
@@ -29,7 +36,7 @@ export function game(global_info){
         canvas_initialize(global_info.canvas, global_info.context);
 
         // マップを描画する
-        let current_map = world_map()[player.world_map_x][player.world_map_y]; // 現在プレイヤーが居るマップ
+        let current_map = world_map()[player.world_map_y][player.world_map_x]; // 現在プレイヤーが居るマップ
         draw_map(current_map, global_info.canvas, global_info.context, global_info.img.map_chip);
 
         // プレイヤーの操作をプレイヤーキャラに反映
