@@ -77,7 +77,7 @@ export class Player{
     // 進めない場合、ここで、in_action_frame.move を 0 にすることで、移動を中止する
     check_movability(){
         // 現在プレイヤーが居るマップ
-        let current_map = world_map()[this.world_map_x][this.world_map_y];
+        let current_map = world_map()[this.world_map_y][this.world_map_x];
         let player_x = this.x - 0.5; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
         let player_y = this.y - 0.5; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
 

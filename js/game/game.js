@@ -36,7 +36,7 @@ export function game(global_info){
         canvas_initialize(global_info.canvas, global_info.context);
 
         // マップを描画する
-        let current_map = world_map()[player.world_map_x][player.world_map_y]; // 現在プレイヤーが居るマップ
+        let current_map = world_map()[player.world_map_y][player.world_map_x]; // 現在プレイヤーが居るマップ
         draw_map(current_map, global_info.canvas, global_info.context, global_info.img.map_chip);
 
         // プレイヤーの操作をプレイヤーキャラに反映
