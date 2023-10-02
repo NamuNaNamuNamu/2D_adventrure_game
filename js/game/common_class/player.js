@@ -3,7 +3,7 @@
 import { Arrow } from "./arrow.js";
 import { world_map } from "./../common_function/world_map.js";
 
-const PLAYER_SPEED_COEFFICIENT = 0.33;    // 弓矢のスピードの係数
+const PLAYER_SPEED_COEFFICIENT = 0.33;    // プレイヤーのスピードの係数
 const ATTACK_COOL_TIME = 10; // 攻撃クールタイム
 const MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON = [ // プレイヤーが移動できない床
     2,  // 海
