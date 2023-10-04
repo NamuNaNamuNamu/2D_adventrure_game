@@ -71,13 +71,20 @@ export function main(){
     }
 
     function prepare_images(){
+        // マップチップの写真のパス
         const MAP_CHIP_IMG_PATH = "../img/map_chip.png";
+        // 黒いウィンドウの写真のパス
         const BLACK_WINDOW_IMG_PATH = "../img/black_window.png";
+        // 右向きの白い矢印の写真のパス
         const TRIANGLE_RIGHT_IMG_PATH = "../img/triangle_right.png";
+        // 弓矢の写真のパス
         const ARROW_UP_IMG_PATH = "../img/arrow_up.png";
         const ARROW_DOWN_IMG_PATH = "../img/arrow_down.png";
         const ARROW_LEFT_IMG_PATH = "../img/arrow_left.png";
         const ARROW_RIGHT_IMG_PATH = "../img/arrow_right.png";
+        // 敵キャラの写真のパス
+        const BLUE_SLIME_IMG_PATH = "../img/enemies/blue_slime.png";
+        // プレイヤーキャラの写真のパス
         const YUUSHA_FRONT1_IMG_PATH = "../img/yuusha_front1.png";
         const YUUSHA_FRONT2_IMG_PATH = "../img/yuusha_front2.png";
         const YUUSHA_BACK1_IMG_PATH = "../img/yuusha_back1.png";
@@ -96,6 +103,7 @@ export function main(){
             arrow_down: generate_img_object(ARROW_DOWN_IMG_PATH),
             arrow_left: generate_img_object(ARROW_LEFT_IMG_PATH),
             arrow_right: generate_img_object(ARROW_RIGHT_IMG_PATH),
+            blue_slime: generate_img_object(BLUE_SLIME_IMG_PATH),
             yuusha_front1: generate_img_object(YUUSHA_FRONT1_IMG_PATH),
             yuusha_front2: generate_img_object(YUUSHA_FRONT2_IMG_PATH),
             yuusha_back1: generate_img_object(YUUSHA_BACK1_IMG_PATH),

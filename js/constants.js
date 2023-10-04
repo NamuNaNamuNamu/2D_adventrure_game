@@ -10,10 +10,11 @@ FPS = 30;
 // 1 画面に収まる タイル の数
 const FIELD_SIZE_IN_SCREEN = 16;
 
-//// プレイヤー関連
-// プレイヤーの最小移動単位 (タイル換算)
+// キャラクターの最小移動単位 (タイル換算)
 MINIMUM_STEP = 0.5;
 
+//// プレイヤー関連
+
 // プレイヤーの初期リスポーン位置 (ワールドマップの x, y 座標換算)
-INITIAL_WORLD_MAP_X = 2;
-INITIAL_WORLD_MAP_Y = 2;
+INITIAL_WORLD_MAP_X = 1;
+INITIAL_WORLD_MAP_Y = 0;
