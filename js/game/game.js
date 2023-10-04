@@ -9,10 +9,18 @@ import { draw_map } from "./common_function/draw_map.js";
 
 export function game(global_info){
     let player_img = {
-        front: [global_info.img.yuusha_front1, global_info.img.yuusha_front2],
-        back: [global_info.img.yuusha_back1, global_info.img.yuusha_back2],
-        left: [global_info.img.yuusha_left1, global_info.img.yuusha_left2],
-        right: [global_info.img.yuusha_right1, global_info.img.yuusha_right2],
+        blue: {
+            front: [global_info.img.yuusha_front1, global_info.img.yuusha_front2],
+            back: [global_info.img.yuusha_back1, global_info.img.yuusha_back2],
+            left: [global_info.img.yuusha_left1, global_info.img.yuusha_left2],
+            right: [global_info.img.yuusha_right1, global_info.img.yuusha_right2],
+        },
+        orange: {
+            front: [global_info.img.yuusha_orange_front1, global_info.img.yuusha_orange_front2],
+            back: [global_info.img.yuusha_orange_back1, global_info.img.yuusha_orange_back2],
+            left: [global_info.img.yuusha_orange_left1, global_info.img.yuusha_orange_left2],
+            right: [global_info.img.yuusha_orange_right1, global_info.img.yuusha_orange_right2],
+        },
         arrow: {
             up: global_info.img.arrow_up,
             down: global_info.img.arrow_down,
@@ -50,7 +58,7 @@ export function game(global_info){
             // 敵キャラの操作を決定
             enemy.control();
             // 敵キャラの動きを処理する
-            enemy.action();
+            enemy.action(player, TILE_SIZE_IN_CANVAS);
             // 敵キャラを描画する
             enemy.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
         }

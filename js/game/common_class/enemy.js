@@ -3,11 +3,13 @@
 import { world_map } from "./../common_function/world_map.js";
 
 export class Enemy{
-    constructor(x, y, world_map_x, world_map_y, img, hp, attack){
+    constructor(x, y, world_map_x, world_map_y, width, height, img, hp, atk){
         this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 敵キャラの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 敵キャラの画像の中心の座標とする
         this.world_map_x = world_map_x;     // その敵キャラが生息する ワールドマップの x 座標
         this.world_map_y = world_map_y;     // その敵キャラが生息する ワールドマップの y 座標
+        this.width = width;                 // 敵キャラの横幅 (タイル基準 = 1 がタイル1枚分)
+        this.height = height;               // 敵キャラの縦幅 (タイル基準 = 1 がタイル1枚分)
         this.img = img;                     // 写真
         this.direction = 0;                 // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.animation_frame = 0;           // 写真のアニメーション (0 と 1 と 2 と 3 を 交互に変えてアニメーションを実現する)
@@ -16,7 +18,7 @@ export class Enemy{
         };
         this.is_taking_a_break = false;     // 行動しない状態
         this.hp = hp;                       // HP
-        this.attack = attack;               // 攻撃力 // NOTE: 難易度によってここを変動させるかも？
+        this.atk = atk;                     // 攻撃力 // NOTE: 難易度によってここを変動させるかも？
     }
 
     // 進もうとしている方向に進めるかどうか確かめる

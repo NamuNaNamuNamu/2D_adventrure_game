@@ -22,18 +22,24 @@ export class Player{
     
     // コンストラクタ
     constructor(x, y, world_map_x, world_map_y, img, hp){
+        const WIDTH = 0.6;
+        const HEIGHT = 0.6;
         this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
         this.world_map_x = world_map_x;     // 現在プレイヤーがいる ワールドマップの x 座標
         this.world_map_y = world_map_y;     // 現在プレイヤーがいる ワールドマップの y 座標
+        this.width = WIDTH;
+        this.height = HEIGHT;
         this.img = img;                     // 写真 (front: 正面, back: 背面, left: 左, right: 右)
-        this.direction = 0;                 // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
+        this.direction = 0;                 // 身体の向き (0: 背面, 1: 正面, 2: 左, 3: 右)
+        this.color = 0;                     // 色 (0: 青, 1: オレンジ)
         this.animation_frame = 0;           // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
         this.in_action_frame = {
             move: 0,                        // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
             attack: 0,                      // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
+            damaged: 0,                     // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
         };
-        this.hp = hp * 0.4;                 // HP
+        this.hp = hp;                       // HP
         this.max_hp = hp;                   // 最大HP
         this.arrows = [];                   // 放った弓矢
     }
@@ -175,6 +181,7 @@ export class Player{
     action(img, enemies){
         this.move(img, enemies);
         this.attack();
+        this.damaged();
     }
 
     // 弓矢とプレイヤーキャラを実際に動かす。
@@ -251,6 +258,28 @@ export class Player{
         this.in_action_frame.attack--;
     }
 
+    // 今のところは、被ダメージフレームを進めるだけの処理
+    damaged(){
+        // 無敵時間が終了したら、無敵時間経過は行わない
+        if(this.in_action_frame.damaged < 0) return;
+
+        // in_action_frame.damaged が 3フレーム進むごとに、色をオレンジと青で交互に変える
+        // 0 フレーム ... 青
+        // 1 ~ 2  フレーム ... オレンジ
+        // 3 ~ 4  フレーム ... 青
+        // 5 ~ 6  フレーム ... オレンジ
+        // 7 ~ 8 フレーム ... 青
+        // ...
+        const BLUE = 0;
+        const ORANGE = 1;
+        const CHANGE_COLOR_FRAME = 2;
+        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 0) this.color = BLUE;
+        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 1) this.color = ORANGE;
+
+        // 被ダメージフレームを 1 進める
+        this.in_action_frame.damaged--;
+    }
+
     // 描画する
     draw(canvas, context, tile_size_in_canvas){
         // 弓矢の描画
@@ -260,10 +289,16 @@ export class Player{
 
         // プレイヤー自身の描画
         let player_img;
-        if(this.direction == 0) player_img = this.img.back[this.animation_frame];
-        if(this.direction == 1) player_img = this.img.front[this.animation_frame];
-        if(this.direction == 2) player_img = this.img.left[this.animation_frame];
-        if(this.direction == 3) player_img = this.img.right[this.animation_frame];
+        // 色の確定
+        const BLUE = 0;
+        const ORANGE = 1;
+        if(this.color == BLUE) player_img = this.img.blue;
+        if(this.color == ORANGE) player_img = this.img.orange;
+
+        if(this.direction == 0) player_img = player_img.back[this.animation_frame];
+        if(this.direction == 1) player_img = player_img.front[this.animation_frame];
+        if(this.direction == 2) player_img = player_img.left[this.animation_frame];
+        if(this.direction == 3) player_img = player_img.right[this.animation_frame];
 
         context.drawImage(
             player_img, // img
@@ -314,5 +349,17 @@ export class Player{
             INSIDE_WIDTH * (this.hp / this.max_hp),
             INSIDE_HEIGHT,
         );
+    }
+
+    // ダメージを受ける処理。
+    // NOTE: ダメージ発生時に敵クラスから呼び出す
+    is_damaged(damage, frame){
+        // もし、無敵時間中なら、ダメージは発生しない
+        if(this.in_action_frame.damaged > 0) return;
+        
+        // HP を ダメージ数分減らす
+        this.hp -= damage;
+        // 無敵時間を付与
+        this.in_action_frame.damaged = frame;
     }
 }

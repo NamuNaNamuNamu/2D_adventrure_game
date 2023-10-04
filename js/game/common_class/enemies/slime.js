@@ -19,7 +19,9 @@ const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できな�
 
 export class Slime extends Enemy{
     constructor(x, y, world_map_x, world_map_y, img, hp, attack){
-        super(x, y, world_map_x, world_map_y, img, hp, attack);
+        const WIDTH = 0.35;   // スライムの横幅
+        const HEIGHT = 0.35;  // スライムの縦幅
+        super(x, y, world_map_x, world_map_y, WIDTH, HEIGHT, img, hp, attack);
         this.is_taking_a_break = false;
     }
 
@@ -47,8 +49,9 @@ export class Slime extends Enemy{
     }
     
     // スライムを行動させる
-    action(){
+    action(player, tile_size_in_canvas){
         this.move();
+        this.attack(player, tile_size_in_canvas);
     }
 
     // スライムを実際に動かす。
@@ -83,6 +86,19 @@ export class Slime extends Enemy{
         this.is_taking_a_break = false;
     }
 
+    // 攻撃判定
+    // プレイヤーキャラと重なったら、ダメージを与える
+    attack(player, tile_size_in_canvas){
+        if(
+            player.x * tile_size_in_canvas + player.width * tile_size_in_canvas * 0.5 >= this.x * tile_size_in_canvas - this.width * tile_size_in_canvas * 0.5 &&
+            this.x * tile_size_in_canvas + this.width * tile_size_in_canvas * 0.5 >= player.x * tile_size_in_canvas - player.width * tile_size_in_canvas * 0.5 &&
+            player.y * tile_size_in_canvas + player.height * tile_size_in_canvas * 0.5 >= this.y * tile_size_in_canvas - this.height * tile_size_in_canvas * 0.5 &&
+            this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 0.5 >= player.y * tile_size_in_canvas - player.height * tile_size_in_canvas * 0.5
+        ){
+            player.is_damaged(10, 30);
+        }
+    }
+
     // 描画する
     draw(canvas, context, tile_size_in_canvas){
         const TOP_LEFT_CORNER_AXIS = {          // マップチップ本体の左上端
@@ -94,16 +110,16 @@ export class Slime extends Enemy{
             height: 32, // マップチップ画像上でのマップチップ 1つ分の幅
         };
         const DIRECTION_ORDER = [3, 0, 1, 2]; // 向きと写真の順番を合わせるための配列
-        const MERGIN_LEFT = 4;
-        const MERGIN_RIGHT = 4;
-        const MERGIN_TOP = 8;
+        const MERGIN_LEFT = 6;
+        const MERGIN_RIGHT = 6;
+        const MERGIN_TOP = 12;
 
         context.drawImage(
             this.img, // img
             TOP_LEFT_CORNER_AXIS.x + MERGIN_LEFT + ANIMATION_ORDER[this.animation_frame] * TILE.width,  // sx (元画像の切り抜き始点 x)
             TOP_LEFT_CORNER_AXIS.y + MERGIN_TOP + DIRECTION_ORDER[this.direction] * TILE.height,  // sy (元画像の切り抜き始点 y)
-            TILE.width - MERGIN_RIGHT,  // s_width (元画像の切り抜きサイズ 横幅)
-            TILE.height,  // s_height (元画像の切り抜きサイズ 縦幅)
+            TILE.width - (MERGIN_LEFT + MERGIN_RIGHT),  // s_width (元画像の切り抜きサイズ 横幅)
+            TILE.height - MERGIN_TOP,  // s_height (元画像の切り抜きサイズ 縦幅)
             this.x * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dx (canvas の描画開始位置 x)
             this.y * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dy (canvas の描画開始位置 y)
             tile_size_in_canvas,  // d_width (canvas の描画サイズ 横幅)

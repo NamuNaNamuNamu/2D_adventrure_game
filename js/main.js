@@ -85,6 +85,14 @@ export function main(){
         // 敵キャラの写真のパス
         const BLUE_SLIME_IMG_PATH = "../img/enemies/blue_slime.png";
         // プレイヤーキャラの写真のパス
+        const YUUSHA_ORANGE_FRONT1_IMG_PATH = "../img/yuusha_orange_front1.png";
+        const YUUSHA_ORANGE_FRONT2_IMG_PATH = "../img/yuusha_orange_front2.png";
+        const YUUSHA_ORANGE_BACK1_IMG_PATH = "../img/yuusha_orange_back1.png";
+        const YUUSHA_ORANGE_BACK2_IMG_PATH = "../img/yuusha_orange_back2.png";
+        const YUUSHA_ORANGE_LEFT1_IMG_PATH = "../img/yuusha_orange_left1.png";
+        const YUUSHA_ORANGE_LEFT2_IMG_PATH = "../img/yuusha_orange_left2.png";
+        const YUUSHA_ORANGE_RIGHT1_IMG_PATH = "../img/yuusha_orange_right1.png";
+        const YUUSHA_ORANGE_RIGHT2_IMG_PATH = "../img/yuusha_orange_right2.png";
         const YUUSHA_FRONT1_IMG_PATH = "../img/yuusha_front1.png";
         const YUUSHA_FRONT2_IMG_PATH = "../img/yuusha_front2.png";
         const YUUSHA_BACK1_IMG_PATH = "../img/yuusha_back1.png";
@@ -104,6 +112,14 @@ export function main(){
             arrow_left: generate_img_object(ARROW_LEFT_IMG_PATH),
             arrow_right: generate_img_object(ARROW_RIGHT_IMG_PATH),
             blue_slime: generate_img_object(BLUE_SLIME_IMG_PATH),
+            yuusha_orange_front1: generate_img_object(YUUSHA_ORANGE_FRONT1_IMG_PATH),
+            yuusha_orange_front2: generate_img_object(YUUSHA_ORANGE_FRONT2_IMG_PATH),
+            yuusha_orange_back1: generate_img_object(YUUSHA_ORANGE_BACK1_IMG_PATH),
+            yuusha_orange_back2: generate_img_object(YUUSHA_ORANGE_BACK2_IMG_PATH),
+            yuusha_orange_left1: generate_img_object(YUUSHA_ORANGE_LEFT1_IMG_PATH),
+            yuusha_orange_left2: generate_img_object(YUUSHA_ORANGE_LEFT2_IMG_PATH),
+            yuusha_orange_right1: generate_img_object(YUUSHA_ORANGE_RIGHT1_IMG_PATH),
+            yuusha_orange_right2: generate_img_object(YUUSHA_ORANGE_RIGHT2_IMG_PATH),
             yuusha_front1: generate_img_object(YUUSHA_FRONT1_IMG_PATH),
             yuusha_front2: generate_img_object(YUUSHA_FRONT2_IMG_PATH),
             yuusha_back1: generate_img_object(YUUSHA_BACK1_IMG_PATH),
