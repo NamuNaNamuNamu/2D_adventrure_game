@@ -47,8 +47,10 @@ export function game(global_info){
         player.action(global_info.img, enemies);
 
         for(let enemy of enemies){
+            // 敵キャラの操作を決定
+            enemy.control();
             // 敵キャラの動きを処理する
-            enemy.action()
+            enemy.action();
             // 敵キャラを描画する
             enemy.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
         }

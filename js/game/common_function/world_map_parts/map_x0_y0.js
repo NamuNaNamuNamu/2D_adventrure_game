@@ -43,15 +43,10 @@ export function map_x0_y0(){
         ],
         enemies: [
             {
-                species_id: enemy_species().slime.id,   // 敵の種類
-                x: 5,                                   // 初期 x 座標
-                y: 6,                                   // 初期 y 座標
+                species_id: enemy_species().slime.id,            // 敵の種類
+                x: 4 + OFFSET,                                   // 初期 x 座標(配列のインデックスになるように調整)
+                y: 4 + OFFSET,                                   // 初期 y 座標(配列のインデックスになるように調整)
             },
-            {
-                species_id: enemy_species().slime.id,   // 敵の種類
-                x: 6,                                   // 初期 x 座標
-                y: 9,                                   // 初期 y 座標
-            }
         ],
     };
 }
