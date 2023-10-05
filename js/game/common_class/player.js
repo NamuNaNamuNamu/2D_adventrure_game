@@ -3,7 +3,7 @@
 import { Arrow } from "./arrow.js";
 import { world_map } from "./../common_function/world_map.js";
 import { generate_enemies } from "../common_function/generate_enemies.js";
-import { delete_enemies } from "../common_function/delete_enemies.js";
+import { delete_all } from "../common_function/delete_all.js";
 
 const PLAYER_SPEED_COEFFICIENT = 0.33;    // プレイヤーのスピードの係数
 const MOVE_COOL_TIME = 3; // 移動クールタイム（1歩で 3フレーム費やす）
@@ -21,9 +21,9 @@ const MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON = [ // プレイヤーが移動でき
 export class Player{
     
     // コンストラクタ
-    constructor(x, y, world_map_x, world_map_y, img, hp){
-        const WIDTH = 0.6;
-        const HEIGHT = 0.6;
+    constructor(x, y, world_map_x, world_map_y, img, hp, atk){
+        const WIDTH = 0.6;                  // プレイヤーの当たり判定の横幅
+        const HEIGHT = 0.6;                 // プレイヤーの当たり判定の縦幅
         this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
         this.world_map_x = world_map_x;     // 現在プレイヤーがいる ワールドマップの x 座標
@@ -41,6 +41,7 @@ export class Player{
         };
         this.hp = hp;                       // HP
         this.max_hp = hp;                   // 最大HP
+        this.atk = atk;                     // 攻撃力
         this.arrows = [];                   // 放った弓矢
     }
 
@@ -217,28 +218,28 @@ export class Player{
             this.x += FIELD_SIZE_IN_SCREEN;
             this.world_map_x--;
             this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_enemies(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
+            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
             generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
         }
         if(this.x > FIELD_SIZE_IN_SCREEN){
             this.x -= FIELD_SIZE_IN_SCREEN;
             this.world_map_x++;
             this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_enemies(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
+            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
             generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
         }
         if(this.y < 0){
             this.y += FIELD_SIZE_IN_SCREEN;
             this.world_map_y--;
             this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_enemies(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
+            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
             generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
         }
         if(this.y > FIELD_SIZE_IN_SCREEN){
             this.y -= FIELD_SIZE_IN_SCREEN;
             this.world_map_y++;
             this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_enemies(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
+            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
             generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
         }
     }
@@ -356,7 +357,7 @@ export class Player{
     is_damaged(damage, frame){
         // もし、無敵時間中なら、ダメージは発生しない
         if(this.in_action_frame.damaged > 0) return;
-        
+
         // HP を ダメージ数分減らす
         this.hp -= damage;
         // 無敵時間を付与

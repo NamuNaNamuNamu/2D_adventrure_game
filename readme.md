@@ -14,7 +14,8 @@
             * draw_map.js <!-- マップのパーツのデータに従って、キャンパスに描画する関数 -->
             * world_map.js <!-- マップのパーツを組み合わせて、世界全体(ワールドマップ)を定義 -->
             * generate_enemies.js <!-- 敵キャラを実際に生成する -->
-            * delete_enemies.js <!-- 敵キャラを現在マップから削除する -->
+            * delete_all.js <!-- 配列の要素を全削除する -->
+            * delete_one.js<!-- 特定の要素 (引数の element) を配列から削除 -->
             * enemy_species.js <!-- 敵の種類一覧 -->
         * start.js <!-- スタート画面 -->
         * setting.js <!-- 設定画面 -->

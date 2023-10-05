@@ -35,6 +35,7 @@ export function game(global_info){
         INITIAL_WORLD_MAP_Y,    // 初期リスポーンする、ワールドマップの y 座標
         player_img,             // プレイヤーキャラの写真
         100,                    // 最大HP
+        1,                      // 攻撃力
     );
 
     let enemies = []; // 現在プレイヤーがいるマップに生存している敵キャラ (倒したり、マップ移動したら、ここからいなくなる)
@@ -58,7 +59,7 @@ export function game(global_info){
             // 敵キャラの操作を決定
             enemy.control();
             // 敵キャラの動きを処理する
-            enemy.action(player, TILE_SIZE_IN_CANVAS);
+            enemy.action(player, enemies, TILE_SIZE_IN_CANVAS);
             // 敵キャラを描画する
             enemy.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
         }

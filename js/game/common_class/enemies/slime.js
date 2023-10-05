@@ -1,6 +1,7 @@
 /* スライムクラス */
 
 import { Enemy } from "./../enemy.js";
+import { delete_one } from "../../common_function/delete_one.js";
 
 const SPEED_COEFFICIENT = 0.11;         // スライムのスピードの係数
 const MOVE_COOL_TIME = 9;               // 移動クールタイム（1歩で 3フレーム費やす）
@@ -18,10 +19,10 @@ const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できな�
 ];
 
 export class Slime extends Enemy{
-    constructor(x, y, world_map_x, world_map_y, img, hp, attack){
-        const WIDTH = 0.35;   // スライムの横幅
-        const HEIGHT = 0.35;  // スライムの縦幅
-        super(x, y, world_map_x, world_map_y, WIDTH, HEIGHT, img, hp, attack);
+    constructor(x, y, world_map_x, world_map_y, img, hp, atk){
+        const WIDTH = 0.35;   // スライムの当たり判定の横幅
+        const HEIGHT = 0.35;  // スライムの当たり判定の縦幅
+        super(x, y, world_map_x, world_map_y, WIDTH, HEIGHT, img, hp, atk);
         this.is_taking_a_break = false;
     }
 
@@ -49,9 +50,11 @@ export class Slime extends Enemy{
     }
     
     // スライムを行動させる
-    action(player, tile_size_in_canvas){
+    action(player, enemies, tile_size_in_canvas){
         this.move();
         this.attack(player, tile_size_in_canvas);
+        this.damaged(player, tile_size_in_canvas);
+        this.died(enemies);
     }
 
     // スライムを実際に動かす。
@@ -95,7 +98,33 @@ export class Slime extends Enemy{
             player.y * tile_size_in_canvas + player.height * tile_size_in_canvas * 0.5 >= this.y * tile_size_in_canvas - this.height * tile_size_in_canvas * 0.5 &&
             this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 0.5 >= player.y * tile_size_in_canvas - player.height * tile_size_in_canvas * 0.5
         ){
-            player.is_damaged(10, 30);
+            const INVINCIBLE_FRAME = 30;
+            player.is_damaged(this.atk, INVINCIBLE_FRAME);
+        }
+    }
+
+    // ダメージ判定
+    // プレイヤーキャラの弓矢が重なったらダメージを受けて、当たった弓矢を消去
+    damaged(player, tile_size_in_canvas){
+        for(let arrow of player.arrows){
+            if(
+                arrow.x * tile_size_in_canvas + arrow.width * tile_size_in_canvas * 0.5 >= this.x * tile_size_in_canvas - this.width * tile_size_in_canvas * 0.5 &&
+                this.x * tile_size_in_canvas + this.width * tile_size_in_canvas * 0.5 >= arrow.x * tile_size_in_canvas - arrow.width * tile_size_in_canvas * 0.5 &&
+                arrow.y * tile_size_in_canvas + arrow.height * tile_size_in_canvas * 0.5 >= this.y * tile_size_in_canvas - this.height * tile_size_in_canvas * 0.5 &&
+                this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 0.5 >= arrow.y * tile_size_in_canvas - arrow.height * tile_size_in_canvas * 0.5
+            ){
+                // プレイヤーキャラの攻撃力分、敵キャラの体力を減らす
+                this.hp -= player.atk;
+                // 弓矢消去
+                player.arrows.splice(player.arrows.indexOf(arrow), 1);
+            }
+        }
+    }
+
+    died(enemies){
+        // HP が 0 になったら、消滅
+        if(this.hp <= 0){
+            delete_one(enemies, this);
         }
     }
 

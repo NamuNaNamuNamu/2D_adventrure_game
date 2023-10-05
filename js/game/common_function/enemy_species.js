@@ -5,8 +5,8 @@ export function enemy_species(){
         slime: {
             id: 1,
             name: "スライム",
-            hp: 10,
-            attack: 5,
+            hp: 1,
+            attack: 10,
         },
     }
 }
