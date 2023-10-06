@@ -47,23 +47,22 @@ export function game(global_info){
         canvas_initialize(global_info.canvas, global_info.context);
 
         // マップを描画する
-        let current_map = world_map()[player.world_map_y][player.world_map_x].map_data; // 現在プレイヤーが居るマップ
+        let current_map = world_map()[player.world_map_x][player.world_map_y].map_data; // 現在プレイヤーが居るマップ
         draw_map(current_map, global_info.canvas, global_info.context, global_info.img.map_chip);
-
-        // プレイヤーの操作をプレイヤーキャラに反映
-        player.control(global_info.key);
-        // プレイヤーキャラの動きを処理する
-        player.action(global_info.img, enemies);
 
         for(let enemy of enemies){
             // 敵キャラの操作を決定
-            enemy.control();
+            enemy.control(player);
             // 敵キャラの動きを処理する
             enemy.action(player, enemies, TILE_SIZE_IN_CANVAS);
             // 敵キャラを描画する
             enemy.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
         }
 
+        // プレイヤーの操作をプレイヤーキャラに反映
+        player.control(global_info.key);
+        // プレイヤーキャラの動きを処理する
+        player.action(global_info.img, enemies);
         // 描画する
         player.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
 

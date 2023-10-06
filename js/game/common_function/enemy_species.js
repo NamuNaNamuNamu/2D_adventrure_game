@@ -8,5 +8,11 @@ export function enemy_species(){
             hp: 1,
             attack: 10,
         },
+        grim_reaper: {
+            id: 2,
+            name: "しにがみ",
+            hp: 5,
+            attack: 30,
+        }
     }
 }

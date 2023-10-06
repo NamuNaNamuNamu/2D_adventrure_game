@@ -82,8 +82,13 @@ export function main(){
         const ARROW_DOWN_IMG_PATH = "../img/arrow_down.png";
         const ARROW_LEFT_IMG_PATH = "../img/arrow_left.png";
         const ARROW_RIGHT_IMG_PATH = "../img/arrow_right.png";
+        // 魔法弾の写真のパス
+        const MAGIC_BULLET_IMG_PATH = "../img/magic_bullet.png";
         // 敵キャラの写真のパス
-        const BLUE_SLIME_IMG_PATH = "../img/enemies/blue_slime.png";
+        const SLIME_IMG_PATH = "../img/enemies/slime.png";
+        const SLIME_DAMAGED_IMG_PATH = "../img/enemies/slime_damaged.png";
+        const GRIM_REAPER_IMG_PATH = "../img/enemies/grim_reaper.png";
+        const GRIM_REAPER_DAMAGED_IMG_PATH = "../img/enemies/grim_reaper_damaged.png";
         // プレイヤーキャラの写真のパス
         const YUUSHA_ORANGE_FRONT1_IMG_PATH = "../img/yuusha_orange_front1.png";
         const YUUSHA_ORANGE_FRONT2_IMG_PATH = "../img/yuusha_orange_front2.png";
@@ -111,7 +116,11 @@ export function main(){
             arrow_down: generate_img_object(ARROW_DOWN_IMG_PATH),
             arrow_left: generate_img_object(ARROW_LEFT_IMG_PATH),
             arrow_right: generate_img_object(ARROW_RIGHT_IMG_PATH),
-            blue_slime: generate_img_object(BLUE_SLIME_IMG_PATH),
+            magic_bullet: generate_img_object(MAGIC_BULLET_IMG_PATH),
+            slime: generate_img_object(SLIME_IMG_PATH),
+            slime_damaged: generate_img_object(SLIME_DAMAGED_IMG_PATH),
+            grim_reaper: generate_img_object(GRIM_REAPER_IMG_PATH),
+            grim_reaper_damaged: generate_img_object(GRIM_REAPER_DAMAGED_IMG_PATH),
             yuusha_orange_front1: generate_img_object(YUUSHA_ORANGE_FRONT1_IMG_PATH),
             yuusha_orange_front2: generate_img_object(YUUSHA_ORANGE_FRONT2_IMG_PATH),
             yuusha_orange_back1: generate_img_object(YUUSHA_ORANGE_BACK1_IMG_PATH),

@@ -42,7 +42,11 @@ export function map_x1_y1(){
             [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
         ],
         enemies: [
-            
+            {
+                species_id: enemy_species().grim_reaper.id,      // 敵の種類
+                x: 7 + OFFSET,                                   // 初期 x 座標(配列のインデックスになるように調整)
+                y: 7 + OFFSET,                                   // 初期 y 座標(配列のインデックスになるように調整)
+            },
         ],
     };
 }

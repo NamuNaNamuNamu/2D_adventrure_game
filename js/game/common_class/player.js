@@ -46,6 +46,7 @@ export class Player{
     }
 
     // プレイヤーの操作を反映
+    // game.js の メインループから呼び出される
     // direction と、in_action_frame.move, in_action_frame.attack を変更し、行動の準備をする。
     control(key){
         // 移動アクション中でなければ、操作を受け付ける
@@ -84,9 +85,10 @@ export class Player{
     // 進もうとしている方向に進めるかどうか確かめる
     // 進めない例: 移動しようとしている方向に、移動できない床がある場合など。
     // 進めない場合、ここで、in_action_frame.move を 0 にすることで、移動を中止する
+    // control メソッド から呼び出される
     check_movability(){
         // 現在プレイヤーが居るマップ
-        let current_map = world_map()[this.world_map_y][this.world_map_x].map_data;
+        let current_map = world_map()[this.world_map_x][this.world_map_y].map_data;
         let player_x = this.x - 0.5; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
         let player_y = this.y - 0.5; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
 
@@ -179,6 +181,7 @@ export class Player{
     }
 
     // 実際の動作処理を行う
+    // game.js の メインループから呼び出される
     action(img, enemies){
         this.move(img, enemies);
         this.attack();
@@ -187,6 +190,7 @@ export class Player{
 
     // 弓矢とプレイヤーキャラを実際に動かす。
     // 弓矢は問答無用で動くが、プレイヤーキャラは、in_action_frame.move が 1 以上のときに移動する
+    // action メソッドから呼び出される
     move(img, enemies){
         // 弓矢を動かす
         for(let arrow of this.arrows){
@@ -245,6 +249,7 @@ export class Player{
     }
 
     // プレイヤーの攻撃命令 を受けて、弓矢を生成する
+    // action メソッドから呼び出される
     attack(){
         // アクションが終了したら、動作は行わない
         if(this.in_action_frame.attack <= 0) return;
@@ -259,12 +264,17 @@ export class Player{
         this.in_action_frame.attack--;
     }
 
-    // 今のところは、被ダメージフレームを進めるだけの処理
+    // 被ダメージ処理
+    // ダメージを受けたらプレイヤーキャラを点滅させる
+    // action メソッドから呼び出される
     damaged(){
         // 無敵時間が終了したら、無敵時間経過は行わない
-        if(this.in_action_frame.damaged < 0) return;
+        if(this.in_action_frame.damaged <= 0) return;
 
-        // in_action_frame.damaged が 3フレーム進むごとに、色をオレンジと青で交互に変える
+        // 被ダメージフレームを 1 進める
+        this.in_action_frame.damaged--;
+
+        // in_action_frame.damaged が 2フレーム進むごとに、色をオレンジと青で交互に変える
         // 0 フレーム ... 青
         // 1 ~ 2  フレーム ... オレンジ
         // 3 ~ 4  フレーム ... 青
@@ -276,12 +286,10 @@ export class Player{
         const CHANGE_COLOR_FRAME = 2;
         if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 0) this.color = BLUE;
         if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 1) this.color = ORANGE;
-
-        // 被ダメージフレームを 1 進める
-        this.in_action_frame.damaged--;
     }
 
-    // 描画する
+    // 描画処理
+    // game.js の メインループから呼び出される
     draw(canvas, context, tile_size_in_canvas){
         // 弓矢の描画
         for(let arrow of this.arrows){
@@ -360,6 +368,14 @@ export class Player{
 
         // HP を ダメージ数分減らす
         this.hp -= damage;
+
+        // 死亡判定
+        // ダメージを受けた結果、HP が 0 になったら、ゲームオーバー処理
+        if(this.hp <= 0){
+            this.hp = 0;                    // HP が マイナスの値にならないように、0に調整。
+            console.log("ゲームオーバー");
+        }
+
         // 無敵時間を付与
         this.in_action_frame.damaged = frame;
     }

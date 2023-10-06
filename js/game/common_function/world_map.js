@@ -20,8 +20,8 @@ export function world_map(){
     一番右下: [2][2]
     */
     return [
-        [map_x0_y0(), map_x1_y0(), map_x2_y0()],
-        [map_x0_y1(), map_x1_y1(), map_x2_y1()],
-        [map_x0_y2(), map_x1_y2(), map_x2_y2()],
+        [map_x0_y0(), map_x0_y1(), map_x0_y2()],
+        [map_x1_y0(), map_x1_y1(), map_x1_y2()],
+        [map_x2_y0(), map_x2_y1(), map_x2_y2()],
     ];
 }
