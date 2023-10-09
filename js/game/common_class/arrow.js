@@ -3,8 +3,20 @@ const ARROW_SPEED_COEFFICIENT = 0.75;    // 弓矢のスピードの係数
 
 export class Arrow{
     constructor(x, y, direction, img){
+        const WIDTH = 0.9;              // 弓矢の当たり判定の横幅 (長いほう)
+        const HEIGHT = 0.1;             // 弓矢の当たり判定の縦幅 (短いほう)
         this.x = x;                     // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 矢の画像の中心の座標とする
         this.y = y;                     // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 矢の画像の中心の座標とする
+        // 矢が縦向きなら
+        if(direction == 0 || direction == 1){
+            this.width = HEIGHT;    // 横を短く
+            this.height = WIDTH;    // 縦を長く
+        }
+        // 矢が横向きなら
+        else{
+            this.width = WIDTH;     // 横を長く
+            this.height = HEIGHT;   // 縦を短く
+        }
         this.direction = direction;     // 矢の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.img = img;                 // 写真 (up: 上, down: 下, left: 左, right: 右)
     }

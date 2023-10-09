@@ -57,7 +57,7 @@ export function start(global_info){
         16 × 16 のサイズを持つサンプルマップを背景に描画する
         */
 
-        let map_data = world_map()[0][0];
+        let map_data = world_map()[0][0].map_data;
         draw_map(map_data, canvas, context, img);
     }
 
