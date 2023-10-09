@@ -2,10 +2,14 @@
 
 import { Enemy } from "./../enemy.js";
 
-const WIDTH = 0.35;   // スライムの当たり判定の横幅
-const HEIGHT = 0.35;  // スライムの当たり判定の縦幅
-const SPEED_COEFFICIENT = 0.111;        // スライムのスピードの係数 (≒ 1 ÷ MOVE_COOL_TIME)
-const MOVE_COOL_TIME = 9;               // 移動クールタイム（1歩で 9フレーム費やす）
+const HIT_BOX = {   // スライムの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
+    width: 0.35,    // 横幅
+    height: 0.35,   // 縦幅
+}
+const COOL_TIME = { // それぞれの行動のクールタイム
+    move: 9,        // 移動クールタイム（1歩で 9フレーム費やす）
+}
+const SPEED_COEFFICIENT = 0.111;        // スライムのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
 const NUM_OF_MOVE_PATTERN = 10;         // 全行動パターン数
 const ANIMATION_ORDER = [0, 1, 2, 1];  // アニメーションの流れ
 const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できない床
@@ -19,8 +23,8 @@ const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できな�
 ];
 
 export class Slime extends Enemy{
-    constructor(x, y, world_map_x, world_map_y, img, hp, atk){
-        super(x, y, world_map_x, world_map_y, WIDTH, HEIGHT, img, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, hp, atk);
+    constructor(x, y, world_map_x, world_map_y, img, status){
+        super(x, y, world_map_x, world_map_y, HIT_BOX.width, HIT_BOX.height, img, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
     }
 
     // 行動を決定する
@@ -34,7 +38,7 @@ export class Slime extends Enemy{
         if(this.in_action_frame.move > 0) return;
 
         // クールタイムをリセット
-        this.in_action_frame.move = MOVE_COOL_TIME;
+        this.in_action_frame.move = COOL_TIME.move;
 
         // 行動をランダムで決める
         let pattern = Math.floor(Math.random() * NUM_OF_MOVE_PATTERN);

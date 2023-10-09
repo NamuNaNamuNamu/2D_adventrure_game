@@ -10,7 +10,7 @@ export class MagicBullet{
         this.width = MAGIC_BULLET_WIDTH;    // 魔法弾の当たり判定の横幅
         this.height = MAGIC_BULLET_HEIGHT;  // 魔法弾の当たり判定の縦幅
         this.direction = direction;         // 魔法弾の飛ぶ向き(0: 背面, 1: 正面, 2: 左, 3: 右)
-        this.img = img;                     // 写真 (up: 上, down: 下, left: 左, right: 右)
+        this.img = img;                     // 写真
     }
 
     // 魔法弾の移動処理
@@ -19,7 +19,7 @@ export class MagicBullet{
         if(this.direction == 1) this.y = Math.round((this.y + MINIMUM_STEP * MAGIC_BULLET_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 2) this.x = Math.round((this.x - MINIMUM_STEP * MAGIC_BULLET_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 3) this.x = Math.round((this.x + MINIMUM_STEP * MAGIC_BULLET_SPEED_COEFFICIENT) * 100) / 100;
-        // もし、場外に出たら、弓矢を削除
+        // もし、場外に出たら、魔法弾を削除
         if(this.x < -0.5 || 
         this.x > FIELD_SIZE_IN_SCREEN + 0.5 || 
         this.y < -0.5 || 
@@ -41,9 +41,8 @@ export class MagicBullet{
         }
     }
 
-    // 弓矢の描画処理
+    // 魔法弾の描画処理
     draw(canvas, context, tile_size_in_canvas){
-
         context.drawImage(
             this.img, // img
             this.x * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dx (canvas の描画開始位置 x)

@@ -7,16 +7,16 @@ const COLOR = {
     original: 0,    // 通常時の色 
     damaged: 1,     // 被ダメージ時の色
 }
-const DAMAGED_COOL_TIME = 8;
+const DAMAGED_COOL_TIME = 8; // 被ダメージのクールタイム (現時点では、身体の色がダメージを受けている時の色になる時間)
 
 export class Enemy{
-    constructor(x, y, world_map_x, world_map_y, width, height, img, map_chip_which_enemy_cannot_move_on, speed_coefficient, animation_order, hp, atk){
+    constructor(x, y, world_map_x, world_map_y, width, height, img, map_chip_which_enemy_cannot_move_on, speed_coefficient, animation_order, status){
         this.x = x;                                                                     // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 敵キャラの画像の中心の座標とする
         this.y = y;                                                                     // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 敵キャラの画像の中心の座標とする
         this.world_map_x = world_map_x;                                                 // その敵キャラが生息する ワールドマップの x 座標
         this.world_map_y = world_map_y;                                                 // その敵キャラが生息する ワールドマップの y 座標
-        this.width = width;                                                             // 敵キャラの横幅 (タイル基準 = 1 がタイル1枚分)
-        this.height = height;                                                           // 敵キャラの縦幅 (タイル基準 = 1 がタイル1枚分)
+        this.width = width;                                                             // 敵キャラの横幅 (タイル基準。すなわち 1 ならタイル1枚分)
+        this.height = height;                                                           // 敵キャラの縦幅 (タイル基準。すなわち 1 ならタイル1枚分)
         this.img = img;                                                                 // 写真 (original: 通常時, damaged: 被ダメージ時)
         this.map_chip_which_enemy_cannot_move_on = map_chip_which_enemy_cannot_move_on; // その敵キャラが移動できない床
         this.speed_coefficient = speed_coefficient;                                     // 移動スピード係数
@@ -30,8 +30,7 @@ export class Enemy{
             damaged: 0,                                                                 // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
         };
         this.is_taking_a_break = false;                                                 // 行動しない状態かどうか
-        this.hp = hp;                                                                   // HP
-        this.atk = atk;                                                                 // 攻撃力 // NOTE: 難易度によってここを変動させるかも？
+        this.status = status;                                                           // 敵キャラのステータス (hp, 攻撃力(atk))
     }
 
     // マップの端に行ったら、マップ外に出ないように戻る
@@ -207,7 +206,7 @@ export class Enemy{
             this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 0.5 >= player.y * tile_size_in_canvas - player.height * tile_size_in_canvas * 0.5
         ){
             const INVINCIBLE_FRAME = 30;
-            player.is_damaged(this.atk, INVINCIBLE_FRAME);
+            player.is_damaged(this.status.atk, INVINCIBLE_FRAME);
         }
     }
 
@@ -224,7 +223,7 @@ export class Enemy{
                 this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 0.5 >= arrow.y * tile_size_in_canvas - arrow.height * tile_size_in_canvas * 0.5
             ){
                 // プレイヤーキャラの攻撃力分、敵キャラの体力を減らす
-                this.is_damaged(player.atk, enemies, arrow, player.arrows);
+                this.is_damaged(player.status.atk, enemies, arrow, player.arrows);
             }
         }
 
@@ -280,7 +279,7 @@ export class Enemy{
     // NOTE: ダメージ発生時に damaged メソッドから呼び出される
     is_damaged(damage, enemies, arrow, arrows){
         // HP を ダメージ数分減らす
-        this.hp -= damage;
+        this.status.hp -= damage;
         // 被ダメージフレームをリセットする (プレイヤーキャラと違って無敵時間は付与しない)
         this.in_action_frame.damaged = DAMAGED_COOL_TIME;
         // 当たった弓矢を消去
@@ -288,7 +287,7 @@ export class Enemy{
 
         // 死亡判定
         // ダメージを受けた結果、HP が 0 になったら、自分を消滅させる。
-        if(this.hp <= 0){
+        if(this.status.hp <= 0){
             delete_one(enemies, this);
             return;
         }

@@ -5,9 +5,19 @@ import { world_map } from "./../common_function/world_map.js";
 import { generate_enemies } from "../common_function/generate_enemies.js";
 import { delete_all } from "../common_function/delete_all.js";
 
+const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
+    width: 0.6,    // 横幅
+    height: 0.6,   // 縦幅
+}
+const COOL_TIME = { // それぞれの行動のクールタイム
+    move: 3,        // 移動クールタイム（1歩で 3 フレーム費やす）
+    attack: 10      // 攻撃クールタイム
+}
+const COLOR = {
+    blue: 0,       // 青 
+    orange: 1,     // オレンジ
+}
 const PLAYER_SPEED_COEFFICIENT = 0.33;    // プレイヤーのスピードの係数
-const MOVE_COOL_TIME = 3; // 移動クールタイム（1歩で 3フレーム費やす）
-const ATTACK_COOL_TIME = 10; // 攻撃クールタイム
 const MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON = [ // プレイヤーが移動できない床
     2,  // 海
     4,  // 剣のマークの看板
@@ -22,26 +32,26 @@ export class Player{
     
     // コンストラクタ
     constructor(x, y, world_map_x, world_map_y, img, hp, atk){
-        const WIDTH = 0.6;                  // プレイヤーの当たり判定の横幅
-        const HEIGHT = 0.6;                 // プレイヤーの当たり判定の縦幅
         this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
         this.world_map_x = world_map_x;     // 現在プレイヤーがいる ワールドマップの x 座標
         this.world_map_y = world_map_y;     // 現在プレイヤーがいる ワールドマップの y 座標
-        this.width = WIDTH;
-        this.height = HEIGHT;
+        this.width = HIT_BOX.width;         // プレイヤーの当たり判定の横幅
+        this.height = HIT_BOX.height;       // プレイヤーの当たり判定の縦幅
         this.img = img;                     // 写真 (front: 正面, back: 背面, left: 左, right: 右)
-        this.direction = 0;                 // 身体の向き (0: 背面, 1: 正面, 2: 左, 3: 右)
-        this.color = 0;                     // 色 (0: 青, 1: オレンジ)
+        this.direction = 0;                 // 身体の向き (0: 背面(上), 1: 正面(下), 2: 左, 3: 右)
+        this.color = COLOR.blue;            // 色 (0: 青, 1: オレンジ)
         this.animation_frame = 0;           // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
         this.in_action_frame = {
             move: 0,                        // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
             attack: 0,                      // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
             damaged: 0,                     // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
         };
-        this.hp = hp;                       // HP
         this.max_hp = hp;                   // 最大HP
-        this.atk = atk;                     // 攻撃力
+        this.status = {
+            hp: hp,                         // HP
+            atk: atk,                       // 攻撃力
+        }
         this.arrows = [];                   // 放った弓矢
     }
 
@@ -54,22 +64,22 @@ export class Player{
             // w, a, s, d キー入力に応じて移動させる
             if(key.is_w_pressed){ 
                 this.direction = 0; // 上方向
-                this.in_action_frame.move = MOVE_COOL_TIME;
+                this.in_action_frame.move = COOL_TIME.move;
                 this.check_movability(); // 上方向に移動可能かどうか確かめる
             }
             else if(key.is_s_pressed){
                 this.direction = 1; // 下方向
-                this.in_action_frame.move = MOVE_COOL_TIME;
+                this.in_action_frame.move = COOL_TIME.move;
                 this.check_movability(); // 下方向に移動可能かどうか確かめる
             }
             else if(key.is_a_pressed){
                 this.direction = 2; // 左方向
-                this.in_action_frame.move = MOVE_COOL_TIME;
+                this.in_action_frame.move = COOL_TIME.move;
                 this.check_movability(); // 左方向に移動可能かどうか確かめる
             }
             else if(key.is_d_pressed){
                 this.direction = 3; // 右方向
-                this.in_action_frame.move = MOVE_COOL_TIME;
+                this.in_action_frame.move = COOL_TIME.move;
                 this.check_movability(); // 右方向に移動可能かどうか確かめる
             }
         }
@@ -77,7 +87,7 @@ export class Player{
         // 攻撃アクション中でなければ、操作を受け付ける
         if(this.in_action_frame.attack <= 0){
             if(key.is_enter_pressed){
-                this.in_action_frame.attack = ATTACK_COOL_TIME; // 攻撃クールタイムがある
+                this.in_action_frame.attack = COOL_TIME.attack; // 攻撃クールタイムがある
             }
         }
     }
@@ -255,7 +265,7 @@ export class Player{
         if(this.in_action_frame.attack <= 0) return;
 
         // 攻撃命令を受け付けたその時だけ弓矢を生成
-        if(this.in_action_frame.attack == ATTACK_COOL_TIME){
+        if(this.in_action_frame.attack == COOL_TIME.attack){
             let arrow = new Arrow(this.x, this.y, this.direction, this.img.arrow);
             this.arrows.push(arrow);
         }
@@ -274,18 +284,16 @@ export class Player{
         // 被ダメージフレームを 1 進める
         this.in_action_frame.damaged--;
 
-        // in_action_frame.damaged が 2フレーム進むごとに、色をオレンジと青で交互に変える
+        // in_action_frame.damaged が 2 フレーム進むごとに、色をオレンジと青で交互に変える
         // 0 フレーム ... 青
         // 1 ~ 2  フレーム ... オレンジ
         // 3 ~ 4  フレーム ... 青
         // 5 ~ 6  フレーム ... オレンジ
         // 7 ~ 8 フレーム ... 青
         // ...
-        const BLUE = 0;
-        const ORANGE = 1;
-        const CHANGE_COLOR_FRAME = 2;
-        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 0) this.color = BLUE;
-        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 1) this.color = ORANGE;
+        const CHANGE_COLOR_FRAME = 2;   // 何フレームごとに色を変えるか
+        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 0) this.color = COLOR.blue;
+        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 1) this.color = COLOR.orange;
     }
 
     // 描画処理
@@ -299,10 +307,8 @@ export class Player{
         // プレイヤー自身の描画
         let player_img;
         // 色の確定
-        const BLUE = 0;
-        const ORANGE = 1;
-        if(this.color == BLUE) player_img = this.img.blue;
-        if(this.color == ORANGE) player_img = this.img.orange;
+        if(this.color == COLOR.blue) player_img = this.img.blue;
+        if(this.color == COLOR.orange) player_img = this.img.orange;
 
         if(this.direction == 0) player_img = player_img.back[this.animation_frame];
         if(this.direction == 1) player_img = player_img.front[this.animation_frame];
@@ -355,7 +361,7 @@ export class Player{
         context.fillRect(
             canvas.width * HP_BAR_X - INSIDE_WIDTH * 0.5,
             canvas.height * HP_BAR_Y - INSIDE_HEIGHT * 0.5,
-            INSIDE_WIDTH * (this.hp / this.max_hp),
+            INSIDE_WIDTH * (this.status.hp / this.max_hp),
             INSIDE_HEIGHT,
         );
     }
@@ -367,12 +373,12 @@ export class Player{
         if(this.in_action_frame.damaged > 0) return;
 
         // HP を ダメージ数分減らす
-        this.hp -= damage;
+        this.status.hp -= damage;
 
         // 死亡判定
         // ダメージを受けた結果、HP が 0 になったら、ゲームオーバー処理
-        if(this.hp <= 0){
-            this.hp = 0;                    // HP が マイナスの値にならないように、0に調整。
+        if(this.status.hp <= 0){
+            this.status.hp = 0;                    // HP が マイナスの値にならないように、0に調整。
             console.log("ゲームオーバー");
         }
 

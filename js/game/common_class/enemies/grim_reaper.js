@@ -3,12 +3,16 @@
 import { MagicBullet } from "../magic_bullet.js";
 import { Enemy } from "./../enemy.js";
 
-const WIDTH = 0.35;   // しにがみの当たり判定の横幅
-const HEIGHT = 0.35;  // しにがみの当たり判定の縦幅
-const MAGIC_BULLET_ATK_COEFFICIENT = 0.5;   // 直接、身体が触れる攻撃と比較した、魔法弾の攻撃倍率
-const SPEED_COEFFICIENT = 0.166;            // しにがみのスピードの係数 (≒ 1 ÷ MOVE_COOL_TIME)
-const MOVE_COOL_TIME = 6;                   // 移動クールタイム（1歩で 6フレーム費やす）
-const ATTACK_COOL_TIME = 60;                // 攻撃クールタイム
+const HIT_BOX = {   // しにがみの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
+    width: 0.35,    // 横幅
+    height: 0.35,   // 縦幅
+}
+const COOL_TIME = { // それぞれの行動のクールタイム
+    move: 6,        // 移動クールタイム（1歩で 6フレーム費やす）
+    attack: 60,     // 攻撃クールタイム
+}
+const MAGIC_BULLET_ATK_COEFFICIENT = 0.5;   // 直接、身体が触れる攻撃を 1 としたときの、魔法弾の攻撃倍率。atk に 掛け算する。
+const SPEED_COEFFICIENT = 0.166;            // しにがみのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
 const NUM_OF_MOVE_PATTERN = 7;              // 全行動パターン数
 const ANIMATION_ORDER = [0, 1, 2, 1];       // アニメーションの流れ
 const MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON = [ // しにがみが移動できない床
@@ -22,28 +26,28 @@ const MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON = [ // しにがみが移動で�
 ];
 
 export class GrimReaper extends Enemy{
-    constructor(x, y, world_map_x, world_map_y, img, hp, atk){
-        super(x, y, world_map_x, world_map_y, WIDTH, HEIGHT, img, MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, hp, atk);
+    constructor(x, y, world_map_x, world_map_y, img, status){
+        super(x, y, world_map_x, world_map_y, HIT_BOX.width, HIT_BOX.height, img, MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
         this.magic_bullets = [];    // 放った魔法弾
     }
 
     // 行動を決定する
     // game.js の メインループから呼び出される
     // direction と、in_action_frame.move, is_taking_a_break を変更し、行動の準備をする。
-    // 1. 0 ~ NUM_OF_MOVE_PATTERN のうち 1 パターンに行動が決まる
-    //     1-1. パターンが 4 ~ NUM_OF_MOVE_PATTERN の場合、動かない
+    // 1. COOL_TIME.move に 1 回、0 ~ NUM_OF_MOVE_PATTERN のうち 1 パターンに行動が決まる
+    //     1-1. パターンが 4 ~ NUM_OF_MOVE_PATTERN - 1 の場合、動かない
     //     1-2. パターンが 0 ~ 3 の場合、プレイヤーキャラに近づくように動く
     control(player){
         // 行動中であれば、受け付けない
         if(this.in_action_frame.move > 0) return;
 
         // クールタイムをリセット
-        this.in_action_frame.move = MOVE_COOL_TIME;
+        this.in_action_frame.move = COOL_TIME.move;
 
         // 行動をランダムで決める
         let pattern = Math.floor(Math.random() * NUM_OF_MOVE_PATTERN);
 
-        // 4 ~ NUM_OF_MOVE_PATTERN の場合 => 動かない
+        // 4 ~ NUM_OF_MOVE_PATTERN - 1 の場合 => 動かない
         if(pattern >= 4 && pattern <= NUM_OF_MOVE_PATTERN){
             this.is_taking_a_break = true;
         }
@@ -84,7 +88,7 @@ export class GrimReaper extends Enemy{
 
         // 魔法弾の攻撃判定
         for(let magic_bullet of this.magic_bullets){
-            magic_bullet.attack(player, this.atk * MAGIC_BULLET_ATK_COEFFICIENT, tile_size_in_canvas);
+            magic_bullet.attack(player, this.status.atk * MAGIC_BULLET_ATK_COEFFICIENT, tile_size_in_canvas);
         }
 
         // 向いている方向にプレイヤーキャラが通ったら、その方向に弾を発射する
@@ -98,14 +102,14 @@ export class GrimReaper extends Enemy{
                 this.direction == 2 && x_diff < 0 && y_diff == 0 || // 左を向いているとき
                 this.direction == 3 && x_diff > 0 && y_diff == 0    // 右を向いているとき
             ){
-                this.in_action_frame.attack = ATTACK_COOL_TIME;
+                this.in_action_frame.attack = COOL_TIME.attack;
             }
         }
 
         // アクションが終了したら、動作は行わない
         if(this.in_action_frame.attack <= 0) return;
 
-        if(this.in_action_frame.attack == ATTACK_COOL_TIME){
+        if(this.in_action_frame.attack == COOL_TIME.attack){
             let magic_bullet = new MagicBullet(this.x, this.y, this.direction, this.img.magic_bullet);
             this.magic_bullets.push(magic_bullet);
         }
