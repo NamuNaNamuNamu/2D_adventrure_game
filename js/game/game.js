@@ -48,7 +48,12 @@ export function game(global_info){
 
         // マップを描画する
         let current_map = world_map()[player.world_map_x][player.world_map_y].map_data; // 現在プレイヤーが居るマップ
-        draw_map(current_map, global_info.canvas, global_info.context, global_info.img.map_chip);
+        let map_chip_img = {
+            map_chip1: global_info.img.map_chip1,
+            map_chip2: global_info.img.map_chip2,
+            map_chip3: global_info.img.map_chip3,
+        }
+        draw_map(current_map, global_info.canvas, global_info.context, map_chip_img);
 
         for(let enemy of enemies){
             // 敵キャラの操作を決定
