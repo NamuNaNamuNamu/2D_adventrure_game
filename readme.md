@@ -6,6 +6,7 @@
         - common_class <!-- ゲーム内容における処理全般で使えるクラス -->
             - enemies <!-- 敵キャラクラス -->
             * enemy.js <!-- 敵キャラ大元クラス -->
+            * magic_bullet.js <!-- 魔法弾クラス -->
             * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
             * player.js <!-- プレイヤー Player クラス -->
         - common_function <!-- ゲーム内容における処理全般で使える関数 -->
