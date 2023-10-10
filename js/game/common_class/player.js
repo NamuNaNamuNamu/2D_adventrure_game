@@ -2,8 +2,9 @@
 
 import { Arrow } from "./arrow.js";
 import { world_map } from "./../common_function/world_map.js";
-import { generate_enemies } from "../common_function/generate_enemies.js";
-import { delete_all } from "../common_function/delete_all.js";
+import { generate_enemies } from "./../common_function/generate_enemies.js";
+import { delete_all } from "./../common_function/delete_all.js";
+import { change_map_by_stairs_list } from "./../common_function/change_map_by_stairs_list.js";
 
 const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.6,    // 横幅
@@ -242,34 +243,10 @@ export class Player{
         }
 
         // マップ移動処理
-        if(this.x < 0){
-            this.x += FIELD_SIZE_IN_SCREEN;
-            this.world_map_x--;
-            this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
-            generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
-        }
-        if(this.x > FIELD_SIZE_IN_SCREEN){
-            this.x -= FIELD_SIZE_IN_SCREEN;
-            this.world_map_x++;
-            this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
-            generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
-        }
-        if(this.y < 0){
-            this.y += FIELD_SIZE_IN_SCREEN;
-            this.world_map_y--;
-            this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
-            generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
-        }
-        if(this.y > FIELD_SIZE_IN_SCREEN){
-            this.y -= FIELD_SIZE_IN_SCREEN;
-            this.world_map_y++;
-            this.arrows = [];   // マップ移動したら、弓矢は全て消す
-            delete_all(enemies); // マップ移動したら、現在のマップにいる敵も全て消す
-            generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
-        }
+        this.check_map_change(img, enemies);
+
+        // 階段でのマップ移動処理
+        this.check_map_change_by_stairs(img, enemies);
     }
 
     // プレイヤーの攻撃命令 を受けて、弓矢を生成する
@@ -398,5 +375,75 @@ export class Player{
 
         // 無敵時間を付与
         this.in_action_frame.damaged = frame;
+    }
+
+    // マップ移動処理
+    check_map_change(img, enemies){
+        if(this.x < 0){
+            this.x += FIELD_SIZE_IN_SCREEN;
+            this.world_map_x--;
+            this.execute_common_process_by_map_change(img, enemies);
+        }
+        if(this.x > FIELD_SIZE_IN_SCREEN){
+            this.x -= FIELD_SIZE_IN_SCREEN;
+            this.world_map_x++;
+            this.execute_common_process_by_map_change(img, enemies);
+        }
+        if(this.y < 0){
+            this.y += FIELD_SIZE_IN_SCREEN;
+            this.world_map_y--;
+            this.execute_common_process_by_map_change(img, enemies);
+        }
+        if(this.y > FIELD_SIZE_IN_SCREEN){
+            this.y -= FIELD_SIZE_IN_SCREEN;
+            this.world_map_y++;
+            this.execute_common_process_by_map_change(img, enemies);
+        }
+    }
+
+    // 階段でのマップ移動処理
+    // 昇り階段の座標とプレイヤーキャラの
+    // ワールドマップ上の座標と、マップ上の座標が一致したら、下り階段の座標にワープする
+    // 下り階段の座標とプレイヤーキャラの
+    // ワールドマップ上の座標と、マップ上の座標が一致したら、昇り階段の座標にワープする
+    check_map_change_by_stairs(img, enemies){
+        for(let change_map_by_stair of change_map_by_stairs_list()){
+            // 昇り階段から下り階段へのワープ
+            if(
+                this.x == change_map_by_stair.ascending.x + OFFSET &&
+                this.y == change_map_by_stair.ascending.y + OFFSET &&
+                this.world_map_x == change_map_by_stair.ascending.world_map_x &&
+                this.world_map_y == change_map_by_stair.ascending.world_map_y
+            ){
+                this.x = change_map_by_stair.descending.x + OFFSET;
+                this.y = change_map_by_stair.descending.y + OFFSET;
+                this.world_map_x = change_map_by_stair.descending.world_map_x;
+                this.world_map_y = change_map_by_stair.descending.world_map_y;
+                this.execute_common_process_by_map_change(img, enemies);
+            }
+            // 下り階段から昇り階段へのワープ
+            else if(
+                this.x == change_map_by_stair.descending.x + OFFSET &&
+                this.y == change_map_by_stair.descending.y + OFFSET &&
+                this.world_map_x == change_map_by_stair.descending.world_map_x &&
+                this.world_map_y == change_map_by_stair.descending.world_map_y
+            ){
+                this.x = change_map_by_stair.ascending.x + OFFSET;
+                this.y = change_map_by_stair.ascending.y + OFFSET;
+                this.world_map_x = change_map_by_stair.ascending.world_map_x;
+                this.world_map_y = change_map_by_stair.ascending.world_map_y;
+                this.execute_common_process_by_map_change(img, enemies);
+            }
+        }
+    }
+
+    // マップ移動の際に行われる共通処理
+    // - 弓矢の消去
+    // - 移動前のマップの敵の全消去
+    // - 移動先のマップの敵の生成
+    execute_common_process_by_map_change(img, enemies){
+        this.arrows = [];   // 弓矢を全て消す
+        delete_all(enemies); // 現在のマップにいる敵を全て消す
+        generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
     }
 }
