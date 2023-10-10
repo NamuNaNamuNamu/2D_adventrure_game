@@ -3,12 +3,15 @@
 import { map_x0_y0 } from "./world_map_parts/map_x0_y0.js";
 import { map_x0_y1 } from "./world_map_parts/map_x0_y1.js";
 import { map_x0_y2 } from "./world_map_parts/map_x0_y2.js";
+import { map_x0_y3 } from "./world_map_parts/map_x0_y3.js";
 import { map_x1_y0 } from "./world_map_parts/map_x1_y0.js";
 import { map_x1_y1 } from "./world_map_parts/map_x1_y1.js";
 import { map_x1_y2 } from "./world_map_parts/map_x1_y2.js";
+import { map_x1_y3 } from "./world_map_parts/map_x1_y3.js";
 import { map_x2_y0 } from "./world_map_parts/map_x2_y0.js";
 import { map_x2_y1 } from "./world_map_parts/map_x2_y1.js";
 import { map_x2_y2 } from "./world_map_parts/map_x2_y2.js";
+import { map_x2_y3 } from "./world_map_parts/map_x2_y3.js";
 
 export function world_map(){
     /*
@@ -27,8 +30,8 @@ export function world_map(){
     - [5][10] のみ、ラスボスへの道のヒントを与えるマップ
     */
     return [
-        [map_x0_y0(), map_x0_y1(), map_x0_y2()],
-        [map_x1_y0(), map_x1_y1(), map_x1_y2()],
-        [map_x2_y0(), map_x2_y1(), map_x2_y2()],
+        [map_x0_y0(), map_x0_y1(), map_x0_y2(), map_x0_y3()],
+        [map_x1_y0(), map_x1_y1(), map_x1_y2(), map_x1_y3()],
+        [map_x2_y0(), map_x2_y1(), map_x2_y2(), map_x2_y3()],
     ];
 }
