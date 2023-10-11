@@ -5,6 +5,8 @@ import { world_map } from "./../common_function/world_map.js";
 import { generate_enemies } from "./../common_function/generate_enemies.js";
 import { delete_all } from "./../common_function/delete_all.js";
 import { change_map_by_stairs_list } from "./../common_function/change_map_by_stairs_list.js";
+import { change_map_from_map_x0_y1_to_map_x0_y0 } from "./../common_function/change_map_from_map_x0_y1_to_map_x0_y0.js"
+import { delete_one } from "../common_function/delete_one.js";
 
 const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.6,    // 横幅
@@ -56,6 +58,7 @@ export class Player{
         this.img = img;                     // 写真 (front: 正面, back: 背面, left: 左, right: 右)
         this.direction = 0;                 // 身体の向き (0: 背面(上), 1: 正面(下), 2: 左, 3: 右)
         this.color = COLOR.blue;            // 色 (0: 青, 1: オレンジ)
+        this.foot_print = [];               // 1 マップ上での足跡（移動した軌跡）
         this.animation_frame = 0;           // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
         this.in_action_frame = {
             move: 0,                        // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
@@ -114,8 +117,8 @@ export class Player{
     check_movability(){
         // 現在プレイヤーが居るマップ
         let current_map = world_map()[this.world_map_x][this.world_map_y].map_data;
-        let player_x = this.x - 0.5; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-        let player_y = this.y - 0.5; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+        let player_x = this.x - OFFSET; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+        let player_y = this.y - OFFSET; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
 
         // 上方向に移動しようとしている場合
         if(this.direction == 0){
@@ -238,6 +241,8 @@ export class Player{
             // 座標の誤差を補正する
             this.x = Math.round(this.x * 2) * 0.5;
             this.y = Math.round(this.y * 2) * 0.5;
+            // 足跡を追加する
+            this.add_foot_print();
             // アニメーションを 1 動かす(0 なら 1 に。1 なら 0 に)
             this.animation_frame = (this.animation_frame + 1) % 2;
         }
@@ -377,7 +382,26 @@ export class Player{
         this.in_action_frame.damaged = frame;
     }
 
+    // 足跡の追加処理
+    // move メソッドから呼ばれる
+    add_foot_print(){
+        let player_x = this.x - OFFSET; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+        let player_y = this.y - OFFSET; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+        
+        // 足跡を追加
+        this.foot_print.push(
+            {
+                x: player_x,
+                y: player_y,
+            }
+        );
+
+        // 足跡が100個を超えたら、古いものから削除していく
+        if(this.foot_print.length > 100) delete_one(this.foot_print, this.foot_print[0]);
+    }
+
     // マップ移動処理
+    // move メソッドから呼ばれる
     check_map_change(img, enemies){
         if(this.x < 0){
             this.x += FIELD_SIZE_IN_SCREEN;
@@ -391,6 +415,7 @@ export class Player{
         }
         if(this.y < 0){
             this.y += FIELD_SIZE_IN_SCREEN;
+            if(change_map_from_map_x0_y1_to_map_x0_y0(this.world_map_x, this.world_map_y, this.foot_print) == false) return; // マップ[0][1] から ラスボスの城のあるマップ[0][0]に行くときの謎要素の追加
             this.world_map_y--;
             this.execute_common_process_by_map_change(img, enemies);
         }
@@ -402,6 +427,7 @@ export class Player{
     }
 
     // 階段でのマップ移動処理
+    // move メソッドから呼ばれる
     // 昇り階段の座標とプレイヤーキャラの
     // ワールドマップ上の座標と、マップ上の座標が一致したら、下り階段の座標にワープする
     // 下り階段の座標とプレイヤーキャラの
@@ -442,7 +468,8 @@ export class Player{
     // - 移動前のマップの敵の全消去
     // - 移動先のマップの敵の生成
     execute_common_process_by_map_change(img, enemies){
-        this.arrows = [];   // 弓矢を全て消す
+        delete_all(this.arrows); // 弓矢を全て消す
+        delete_all(this.foot_print); // 足跡を全て消す 
         delete_all(enemies); // 現在のマップにいる敵を全て消す
         generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
     }
