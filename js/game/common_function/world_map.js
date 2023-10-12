@@ -17,7 +17,16 @@ import { map_x2_y14 } from "./world_map_parts/map_x2_y14.js";
 
 import { map_x5_y10 } from "./world_map_parts/map_x5_y10.js";
 
+import { map_x8_y5 } from "./world_map_parts/map_x8_y5.js";
+import { map_x8_y6 } from "./world_map_parts/map_x8_y6.js";
+import { map_x8_y7 } from "./world_map_parts/map_x8_y7.js";
+import { map_x8_y8 } from "./world_map_parts/map_x8_y8.js";
+import { map_x8_y9 } from "./world_map_parts/map_x8_y9.js";
 import { map_x9_y5 } from "./world_map_parts/map_x9_y5.js";
+import { map_x9_y6 } from "./world_map_parts/map_x9_y6.js";
+import { map_x9_y7 } from "./world_map_parts/map_x9_y7.js";
+import { map_x9_y8 } from "./world_map_parts/map_x9_y8.js";
+import { map_x9_y9 } from "./world_map_parts/map_x9_y9.js";
 
 export function world_map(){
     /*
@@ -44,7 +53,7 @@ export function world_map(){
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, map_x5_y10(), 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, map_x9_y5(), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, map_x8_y5(), map_x8_y6(), map_x8_y7(), map_x8_y8(), map_x8_y9(), 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, map_x9_y5(), map_x9_y6(), map_x9_y7(), map_x9_y8(), map_x9_y9(), 0, 0, 0, 0, 0],
     ];
 }
