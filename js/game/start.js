@@ -22,7 +22,7 @@ export function start(global_info){
         decide_pointer_location(global_info.key);
     
         // 背景（マップ）を映し出す
-        draw_background(global_info.canvas, global_info.context, global_info.img.map_chip);
+        draw_background(global_info.canvas, global_info.context, global_info.img);
         // タイトル を写し出す
         draw_title("あいうえおアクション(仮)", global_info.canvas, global_info.context);
         // プレイヤーが操作可能なウィンドウ を映し出す
@@ -58,7 +58,12 @@ export function start(global_info){
         */
 
         let map_data = world_map()[0][0].map_data;
-        draw_map(map_data, canvas, context, img);
+        let map_chip_img = {
+            map_chip1: img.map_chip1,
+            map_chip2: img.map_chip2,
+            map_chip3: img.map_chip3,
+        }
+        draw_map(map_data, canvas, context, map_chip_img);
     }
 
     function draw_title(text, canvas, context){

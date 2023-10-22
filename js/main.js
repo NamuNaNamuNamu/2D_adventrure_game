@@ -72,7 +72,9 @@ export function main(){
 
     function prepare_images(){
         // マップチップの写真のパス
-        const MAP_CHIP_IMG_PATH = "../img/map_chip.png";
+        const MAP_CHIP1_IMG_PATH = "../img/map_chip1.png";
+        const MAP_CHIP2_IMG_PATH = "../img/map_chip2.png";
+        const MAP_CHIP3_IMG_PATH = "../img/map_chip3.png";
         // 黒いウィンドウの写真のパス
         const BLACK_WINDOW_IMG_PATH = "../img/black_window.png";
         // 右向きの白い矢印の写真のパス
@@ -109,7 +111,9 @@ export function main(){
         
         // 画像をロードして、辞書型データ形式で返却
         return {
-            map_chip: generate_img_object(MAP_CHIP_IMG_PATH),
+            map_chip1: generate_img_object(MAP_CHIP1_IMG_PATH),
+            map_chip2: generate_img_object(MAP_CHIP2_IMG_PATH),
+            map_chip3: generate_img_object(MAP_CHIP3_IMG_PATH),
             black_window: generate_img_object(BLACK_WINDOW_IMG_PATH),
             triangle_right: generate_img_object(TRIANGLE_RIGHT_IMG_PATH),
             arrow_up: generate_img_object(ARROW_UP_IMG_PATH),
