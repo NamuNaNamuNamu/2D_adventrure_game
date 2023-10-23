@@ -6,20 +6,16 @@
         - common_class <!-- ゲーム内容における処理全般で使えるクラス -->
             - enemies <!-- 敵キャラクラス -->
             * enemy.js <!-- 敵キャラ大元クラス -->
-            * magic_bullet.js <!-- 魔法弾クラス -->
             * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
             * player.js <!-- プレイヤー Player クラス -->
         - common_function <!-- ゲーム内容における処理全般で使える関数 -->
             - world_map_parts <!-- マップのパーツ(16 × 16 サイズ = 1画面分) -->
-            * change_map_by_stairs_list <!-- 階段によるマップ移動を定義した関数 -->
-            * change_map_from_map_x0_y1_to_map_x0_y0.js <!-- マップ[0][1]からラスボスの城のあるマップ[0][0]に行くときの謎解き要素の追加 -->
             * change_screen_to.js <!-- メインループを止めて、次の画面に遷移する関数 -->
             * draw_map.js <!-- マップのパーツのデータに従って、キャンパスに描画する関数 -->
             * world_map.js <!-- マップのパーツを組み合わせて、世界全体(ワールドマップ)を定義 -->
             * generate_enemies.js <!-- 敵キャラを実際に生成する -->
             * delete_all.js <!-- 配列の要素を全削除する -->
-            * delete_one.js <!-- 特定の要素 (引数の element) を配列から削除 -->
-            * last.js <!-- 配列の一番最後の要素を参照する -->
+            * delete_one.js<!-- 特定の要素 (引数の element) を配列から削除 -->
             * enemy_species.js <!-- 敵の種類一覧 -->
         * start.js <!-- スタート画面 -->
         * setting.js <!-- 設定画面 -->
