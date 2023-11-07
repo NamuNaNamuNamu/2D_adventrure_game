@@ -5,12 +5,15 @@
     - game <!-- ゲーム内容に関わる処理 -->
         - common_class <!-- ゲーム内容における処理全般で使えるクラス -->
             - enemies <!-- 敵キャラクラス -->
+            - enemy_weapon <!-- 敵の武器クラス -->
+                * magic_bullet.js <!-- 魔法弾クラス -->
+                * fire.js <!-- 炎攻撃クラス -->
             * enemy.js <!-- 敵キャラ大元クラス -->
-            * magic_bullet.js <!-- 魔法弾クラス -->
             * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
             * player.js <!-- プレイヤー Player クラス -->
         - common_function <!-- ゲーム内容における処理全般で使える関数 -->
             - world_map_parts <!-- マップのパーツ(16 × 16 サイズ = 1画面分) -->
+            * calculate_target_direction.js <!-- 目標の方向を算出する -->
             * change_map_by_stairs_list <!-- 階段によるマップ移動を定義した関数 -->
             * change_map_from_map_x0_y1_to_map_x0_y0.js <!-- マップ[0][1]からラスボスの城のあるマップ[0][0]に行くときの謎解き要素の追加 -->
             * change_screen_to.js <!-- メインループを止めて、次の画面に遷移する関数 -->

@@ -23,7 +23,11 @@ export function map_x0_y7(){
             [33, 34, 21, 21, 21, 34, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33],
         ],
         enemies: [
-            
+            {
+                species_id: enemy_species().black_dragon.id,     // 敵の種類
+                x: 13.5 + OFFSET,                                  // 初期 x 座標(配列のインデックスになるように調整)
+                y: 7.5 + OFFSET,                                   // 初期 y 座標(配列のインデックスになるように調整)
+            },
         ],
     };
 }
