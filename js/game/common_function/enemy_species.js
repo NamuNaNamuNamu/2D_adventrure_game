@@ -13,6 +13,12 @@ export function enemy_species(){
             name: "しにがみ",
             hp: 5,
             attack: 30,
+        },
+        black_dragon: {
+            id: 90,
+            name: "ブラックドラゴン",
+            hp: 40,
+            attack: 70,
         }
     }
 }
