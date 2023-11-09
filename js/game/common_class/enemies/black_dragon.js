@@ -2,7 +2,7 @@
 
 import { Fire } from "../enemy_weapon/fire.js";
 import { Enemy } from "./../enemy.js";
-import { calculate_target_direction } from "../../common_function/calculate_speed.js";
+import { calculate_target_direction } from "../../common_function/calculate_target_direction.js";
 
 const HIT_BOX = {   // ブラックドラゴンの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
