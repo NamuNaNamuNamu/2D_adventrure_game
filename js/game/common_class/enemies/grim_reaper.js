@@ -1,6 +1,6 @@
 /* しにがみクラス */
 
-import { MagicBullet } from "../magic_bullet.js";
+import { MagicBullet } from "../enemy_weapon/magic_bullet.js";
 import { Enemy } from "./../enemy.js";
 
 const HIT_BOX = {   // しにがみの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
