@@ -11,6 +11,24 @@
         canvasには対応してません
     </canvas>
 
+    <!-- TODO: スマホ判定テスト用。テストが終わったら消す。 -->
+    <h1 id = "test"></h1>
+
+    <!-- TODO: スマホ判定テスト用。テストが終わったら消す。 -->
+    <script>
+        // スマホかそれ以外かを判定する
+        // - スマホ ... true
+        // - それ以外 ... false
+        function is_smartphone(){
+            const devise_info = navigator.userAgent;
+
+            return devise_info.match(/iPhone|Android.+Mobile/) ? true : false;
+        }
+
+        const test_p_element = document.getElementById("test");
+        test_p_element.innerText = `スマホですか？: ${is_smartphone()}`;
+    </script>
+
     <script type = "text/javascript" src = "js/constants.js"></script>
     <script type = "module" src = "js/call_main.js"></script>
 </body>
