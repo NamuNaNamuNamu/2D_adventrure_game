@@ -1,4 +1,4 @@
-/* world_map[3][10] を定義する関数 */
+/* world_map[5][10] を定義する関数 */
 
 import { enemy_species } from "../enemy_species.js";
 
