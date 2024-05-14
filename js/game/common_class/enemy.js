@@ -1,7 +1,6 @@
 /* 敵キャラ全てが継承する大元クラス */
 
 import { world_map } from "./../common_function/world_map.js";
-import { delete_one } from "../common_function/delete_one.js";
 
 const COLOR = {
     original: 0,    // 通常時の色 
@@ -288,7 +287,7 @@ export class Enemy{
         // 死亡判定
         // ダメージを受けた結果、HP が 0 になったら、自分を消滅させる。
         if(this.status.hp <= 0){
-            delete_one(enemies, this);
+            enemies.delete(this);
             return;
         }
 

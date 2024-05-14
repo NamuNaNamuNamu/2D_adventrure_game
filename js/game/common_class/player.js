@@ -3,10 +3,9 @@
 import { Arrow } from "./arrow.js";
 import { world_map } from "./../common_function/world_map.js";
 import { generate_enemies } from "./../common_function/generate_enemies.js";
-import { delete_all } from "./../common_function/delete_all.js";
 import { change_map_by_stairs_list } from "./../common_function/change_map_by_stairs_list.js";
 import { change_map_from_map_x0_y1_to_map_x0_y0 } from "./../common_function/change_map_from_map_x0_y1_to_map_x0_y0.js"
-import { delete_one } from "../common_function/delete_one.js";
+import { ExpandedArray } from "./expanded_array.js";
 
 const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.6,    // 横幅
@@ -49,28 +48,28 @@ export class Player{
     
     // コンストラクタ
     constructor(x, y, world_map_x, world_map_y, img, hp, atk){
-        this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
-        this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
-        this.world_map_x = world_map_x;     // 現在プレイヤーがいる ワールドマップの x 座標
-        this.world_map_y = world_map_y;     // 現在プレイヤーがいる ワールドマップの y 座標
-        this.width = HIT_BOX.width;         // プレイヤーの当たり判定の横幅
-        this.height = HIT_BOX.height;       // プレイヤーの当たり判定の縦幅
-        this.img = img;                     // 写真 (front: 正面, back: 背面, left: 左, right: 右)
-        this.direction = 0;                 // 身体の向き (0: 背面(上), 1: 正面(下), 2: 左, 3: 右)
-        this.color = COLOR.blue;            // 色 (0: 青, 1: オレンジ)
-        this.foot_print = [];               // 1 マップ上での足跡（移動した軌跡）
-        this.animation_frame = 0;           // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
+        this.x = x;                             // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
+        this.y = y;                             // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
+        this.world_map_x = world_map_x;         // 現在プレイヤーがいる ワールドマップの x 座標
+        this.world_map_y = world_map_y;         // 現在プレイヤーがいる ワールドマップの y 座標
+        this.width = HIT_BOX.width;             // プレイヤーの当たり判定の横幅
+        this.height = HIT_BOX.height;           // プレイヤーの当たり判定の縦幅
+        this.img = img;                         // 写真 (front: 正面, back: 背面, left: 左, right: 右)
+        this.direction = 0;                     // 身体の向き (0: 背面(上), 1: 正面(下), 2: 左, 3: 右)
+        this.color = COLOR.blue;                // 色 (0: 青, 1: オレンジ)
+        this.foot_print = new ExpandedArray();  // 1 マップ上での足跡（移動した軌跡）
+        this.animation_frame = 0;               // 写真のアニメーション (0 と 1 を交互に変えてアニメーションを実現する)
         this.in_action_frame = {
-            move: 0,                        // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
-            attack: 0,                      // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
-            damaged: 0,                     // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
+            move: 0,                            // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
+            attack: 0,                          // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
+            damaged: 0,                         // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
         };
-        this.max_hp = hp;                   // 最大HP
+        this.max_hp = hp;                       // 最大HP
         this.status = {
-            hp: hp,                         // HP
-            atk: atk,                       // 攻撃力
+            hp: hp,                             // HP
+            atk: atk,                           // 攻撃力
         }
-        this.arrows = [];                   // 放った弓矢
+        this.arrows = new ExpandedArray();      // 放った弓矢
     }
 
     // プレイヤーの操作を反映
@@ -397,7 +396,7 @@ export class Player{
         );
 
         // 足跡が100個を超えたら、古いものから削除していく
-        if(this.foot_print.length > 100) delete_one(this.foot_print, this.foot_print[0]);
+        if(this.foot_print.length > 100) this.foot_print.delete(this.foot_print[0]);
     }
 
     // マップ移動処理
@@ -468,9 +467,9 @@ export class Player{
     // - 移動前のマップの敵の全消去
     // - 移動先のマップの敵の生成
     execute_common_process_by_map_change(img, enemies){
-        delete_all(this.arrows); // 弓矢を全て消す
-        delete_all(this.foot_print); // 足跡を全て消す 
-        delete_all(enemies); // 現在のマップにいる敵を全て消す
+        this.arrows.delete_all(); // 弓矢を全て消す
+        this.foot_print.delete_all(); // 足跡を全て消す 
+        enemies.delete_all(); // 現在のマップにいる敵を全て消す
         generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
     }
 }

@@ -1,11 +1,12 @@
 /* 設定画面 */
 
 import { start } from "./start.js";
-import { change_screen_to } from "./common_function/change_screen_to.js";
 import { canvas_initialize } from "./../global_function/canvas_initialize.js";
-import { Player } from "./common_class/player.js";
+import { change_screen_to } from "./common_function/change_screen_to.js";
 import { world_map } from "./common_function/world_map.js";
 import { draw_map } from "./common_function/draw_map.js";
+import { ExpandedArray } from "./common_class/expanded_array.js"
+import { Player } from "./common_class/player.js";
 
 export function game(global_info){
     let player_img = {
@@ -38,7 +39,7 @@ export function game(global_info){
         1,                      // 攻撃力
     );
 
-    let enemies = []; // 現在プレイヤーがいるマップに生存している敵キャラ (倒したり、マップ移動したら、ここからいなくなる)
+    let enemies = new ExpandedArray(); // 現在プレイヤーがいるマップに生存している敵キャラ (倒したり、マップ移動したら、ここからいなくなる)
 
     let main_loop = setInterval(function(){
         const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でののサイズ

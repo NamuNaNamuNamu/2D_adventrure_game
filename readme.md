@@ -10,6 +10,7 @@
                 * fire.js <!-- 炎攻撃クラス -->
             * enemy.js <!-- 敵キャラ大元クラス -->
             * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
+            * expanded_array.js <!-- 機能拡張した Array (組み込み) クラス -->
             * player.js <!-- プレイヤー Player クラス -->
         - common_function <!-- ゲーム内容における処理全般で使える関数 -->
             - world_map_parts <!-- マップのパーツ(16 × 16 サイズ = 1画面分) -->
@@ -20,8 +21,6 @@
             * draw_map.js <!-- マップのパーツのデータに従って、キャンパスに描画する関数 -->
             * world_map.js <!-- マップのパーツを組み合わせて、世界全体(ワールドマップ)を定義 -->
             * generate_enemies.js <!-- 敵キャラを実際に生成する -->
-            * delete_all.js <!-- 配列の要素を全削除する -->
-            * delete_one.js <!-- 特定の要素 (引数の element) を配列から削除 -->
             * last.js <!-- 配列の一番最後の要素を参照する -->
             * enemy_species.js <!-- 敵の種類一覧 -->
         * start.js <!-- スタート画面 -->

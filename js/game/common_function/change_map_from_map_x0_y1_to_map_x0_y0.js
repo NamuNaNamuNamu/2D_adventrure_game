@@ -1,7 +1,5 @@
 /* マップ[0][1]からラスボスの城のあるマップ[0][0]に行くときの謎解き要素の追加 */
 
-import { delete_one } from "../common_function/delete_one.js";
-
 export function change_map_from_map_x0_y1_to_map_x0_y0(player_world_map_x, player_world_map_y, foot_print){
     // return true ... マップ移動できる
     // return false ... マップ移動できない
@@ -36,7 +34,7 @@ export function change_map_from_map_x0_y1_to_map_x0_y0(player_world_map_x, playe
         }
     }
     for(let i = duplicates.length - 1; i >= 0; i--){
-        delete_one(filtered_foot_print, filtered_foot_print[duplicates[i]]);
+        filtered_foot_print.delete(filtered_foot_print[duplicates[i]])
     }
 
     // 決まった道順を通ってマップ移動したかどうかをチェック
