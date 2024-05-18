@@ -18,4 +18,12 @@ export class ExpandedArray extends Array {
         */
         this.splice(0);
     }
+
+    last(){
+        /*
+        配列の最後の要素を返却する
+        */
+       
+        return this[this.length - 1];    
+    }
 }
