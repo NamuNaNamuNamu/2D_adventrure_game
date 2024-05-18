@@ -23,7 +23,7 @@
             * generate_enemies.js <!-- 敵キャラを実際に生成する -->
             * last.js <!-- 配列の一番最後の要素を参照する -->
             * enemy_species.js <!-- 敵の種類一覧 -->
-        - screens
+        - screens <!-- ゲーム画面 -->
             * start.js <!-- スタート画面 -->
             * setting.js <!-- 設定画面 -->
             * game.js <!-- プレイ画面 -->
