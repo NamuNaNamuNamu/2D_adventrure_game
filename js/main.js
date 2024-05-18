@@ -1,7 +1,7 @@
 /* main 関数 */
 // 一番最初に呼ばれる関数
 
-import * as game from "./game/start.js";
+import * as game from "./game/screens/start.js";
 import { Key } from "./global_class/key.js";
 import { canvas_initialize } from "./global_function/canvas_initialize.js";
 

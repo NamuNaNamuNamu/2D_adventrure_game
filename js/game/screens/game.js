@@ -1,12 +1,12 @@
 /* 設定画面 */
 
 import { start } from "./start.js";
-import { canvas_initialize } from "./../global_function/canvas_initialize.js";
-import { change_screen_to } from "./common_function/change_screen_to.js";
-import { world_map } from "./common_function/world_map.js";
-import { draw_map } from "./common_function/draw_map.js";
-import { ExpandedArray } from "./common_class/expanded_array.js"
-import { Player } from "./common_class/player.js";
+import { canvas_initialize } from "../../global_function/canvas_initialize.js";
+import { change_screen_to } from "../common_function/change_screen_to.js";
+import { world_map } from "../common_function/world_map.js";
+import { draw_map } from "../common_function/draw_map.js";
+import { ExpandedArray } from "../common_class/expanded_array.js"
+import { Player } from "../common_class/player.js";
 
 export function game(global_info){
     let player_img = {

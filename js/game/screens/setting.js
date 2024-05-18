@@ -1,8 +1,8 @@
 /* 設定画面 */
 
 import { start } from "./start.js";
-import { change_screen_to } from "./common_function/change_screen_to.js";
-import { canvas_initialize } from "./../global_function/canvas_initialize.js";
+import { change_screen_to } from "./../common_function/change_screen_to.js";
+import { canvas_initialize } from "./../../global_function/canvas_initialize.js";
 
 export function setting(global_info){
     console.log("設定画面")

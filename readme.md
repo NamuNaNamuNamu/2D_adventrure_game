@@ -23,9 +23,10 @@
             * generate_enemies.js <!-- 敵キャラを実際に生成する -->
             * last.js <!-- 配列の一番最後の要素を参照する -->
             * enemy_species.js <!-- 敵の種類一覧 -->
-        * start.js <!-- スタート画面 -->
-        * setting.js <!-- 設定画面 -->
-        * game.js <!-- プレイ画面 -->
+        - screens
+            * start.js <!-- スタート画面 -->
+            * setting.js <!-- 設定画面 -->
+            * game.js <!-- プレイ画面 -->
     - global_class <!-- プログラム全体で用いるクラス -->
         * key.js <!-- 入力情報をつかさどる Key クラス -->
     - global_function <!-- プログラム全体で用いる関数 -->
