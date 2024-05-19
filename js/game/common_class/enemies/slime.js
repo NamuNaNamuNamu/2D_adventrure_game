@@ -38,7 +38,13 @@ const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できな�
 
 export class Slime extends Enemy{
     constructor(x, y, world_map_x, world_map_y, img, status){
-        super(x, y, world_map_x, world_map_y, HIT_BOX.width, HIT_BOX.height, img, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
+        const location = {
+            x: x,
+            y: y,
+            world_map_x: world_map_x,
+            world_map_y: world_map_y
+        };
+        super(location, HIT_BOX, img, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
     }
 
     // 行動を決定する

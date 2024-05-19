@@ -41,7 +41,13 @@ const MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON = [ // しにがみが移動で�
 
 export class GrimReaper extends Enemy{
     constructor(x, y, world_map_x, world_map_y, img, status){
-        super(x, y, world_map_x, world_map_y, HIT_BOX.width, HIT_BOX.height, img, MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
+        const location = {
+            x: x,
+            y: y,
+            world_map_x: world_map_x,
+            world_map_y: world_map_y
+        };
+        super(location, HIT_BOX, img, MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
         this.magic_bullets = [];    // 放った魔法弾
     }
 

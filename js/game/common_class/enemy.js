@@ -9,13 +9,13 @@ const COLOR = {
 const DAMAGED_COOL_TIME = 8; // 被ダメージのクールタイム (現時点では、身体の色がダメージを受けている時の色になる時間)
 
 export class Enemy{
-    constructor(x, y, world_map_x, world_map_y, width, height, img, map_chip_which_enemy_cannot_move_on, speed_coefficient, animation_order, status){
-        this.x = x;                                                                     // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 敵キャラの画像の中心の座標とする
-        this.y = y;                                                                     // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 敵キャラの画像の中心の座標とする
-        this.world_map_x = world_map_x;                                                 // その敵キャラが生息する ワールドマップの x 座標
-        this.world_map_y = world_map_y;                                                 // その敵キャラが生息する ワールドマップの y 座標
-        this.width = width;                                                             // 敵キャラの横幅 (タイル基準。すなわち 1 ならタイル1枚分)
-        this.height = height;                                                           // 敵キャラの縦幅 (タイル基準。すなわち 1 ならタイル1枚分)
+    constructor(location, hit_box, img, map_chip_which_enemy_cannot_move_on, speed_coefficient, animation_order, status){
+        this.x = location.x;                                                            // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 敵キャラの画像の中心の座標とする
+        this.y = location.y;                                                            // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 敵キャラの画像の中心の座標とする
+        this.world_map_x = location.world_map_x;                                        // その敵キャラが生息する ワールドマップの x 座標
+        this.world_map_y = location.world_map_y;                                        // その敵キャラが生息する ワールドマップの y 座標
+        this.width = hit_box.width;                                                     // 敵キャラの当たり判定の横幅 (タイル基準。すなわち 1 ならタイル1枚分)
+        this.height = hit_box.height;                                                   // 敵キャラの当たり判定の縦幅 (タイル基準。すなわち 1 ならタイル1枚分)
         this.img = img;                                                                 // 写真 (original: 通常時, damaged: 被ダメージ時)
         this.map_chip_which_enemy_cannot_move_on = map_chip_which_enemy_cannot_move_on; // その敵キャラが移動できない床
         this.speed_coefficient = speed_coefficient;                                     // 移動スピード係数
