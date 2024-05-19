@@ -82,7 +82,7 @@ export class GrimReaper extends Enemy{
 
         // マップの端に行ったら、マップ外に出ないように戻る
         // 戻ることを決めたなら、移動可能性チェックは必要ないので、メソッド終了
-        if(this.stay_in_the_map()) return;
+        if(this.should_go_back_inside_the_map()) return;
 
         // 決めた方向に移動可能かどうか確かめる => 不可能なら、動作命令は解除 (this.in_action_frame.move を 0 に)
         if(this.check_movability(this.direction) == false) this.in_action_frame.move = 0;

@@ -36,7 +36,7 @@ export class Enemy{
     // control メソッド から呼び出される
     // 戻る必要があるなら true を返す
     // 必要がないなら false を返す
-    stay_in_the_map(){
+    should_go_back_inside_the_map(){
         if(this.x <= 0){                            // 左にはみ出ようとしたら
             this.direction = 3;                     // 右に戻る
             return true;
