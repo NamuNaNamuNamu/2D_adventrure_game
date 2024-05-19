@@ -64,8 +64,8 @@ export class Enemy{
     // 移動できる場合は、true を返す
     check_movability(direction){
         let current_map = world_map()[this.world_map_x][this.world_map_y].map_data; // 現在敵キャラが居るマップ
-        let enemy_x = this.x - 0.5; // 敵キャラの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-        let enemy_y = this.y - 0.5; // 敵キャラの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+        let enemy_x = this.x - OFFSET; // 敵キャラの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+        let enemy_y = this.y - OFFSET; // 敵キャラの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
 
         // 上方向に移動しようとしている場合
         if(direction == 0){
@@ -198,6 +198,7 @@ export class Enemy{
     // プレイヤーキャラと重なったら、ダメージを与える
     // action メソッドから呼び出される
     attack(player, tile_size_in_canvas){
+        // TODO: この if 文は長すぎるので、「2 つのオブジェクトが重なっているかどうか」を判定するメソッドを作って、それを使う。
         if(
             player.x * tile_size_in_canvas + player.width * tile_size_in_canvas * 0.5 >= this.x * tile_size_in_canvas - this.width * tile_size_in_canvas * 0.5 &&
             this.x * tile_size_in_canvas + this.width * tile_size_in_canvas * 0.5 >= player.x * tile_size_in_canvas - player.width * tile_size_in_canvas * 0.5 &&
@@ -215,6 +216,7 @@ export class Enemy{
     damaged(player, enemies, tile_size_in_canvas){
         // 弓矢が自分に当たったら
         for(let arrow of player.arrows){
+            // TODO: この if 文は長すぎるので、「2 つのオブジェクトが重なっているかどうか」を判定するメソッドを作って、それを使う。
             if(
                 arrow.x * tile_size_in_canvas + arrow.width * tile_size_in_canvas * 0.5 >= this.x * tile_size_in_canvas - this.width * tile_size_in_canvas * 0.5 &&
                 this.x * tile_size_in_canvas + this.width * tile_size_in_canvas * 0.5 >= arrow.x * tile_size_in_canvas - arrow.width * tile_size_in_canvas * 0.5 &&
