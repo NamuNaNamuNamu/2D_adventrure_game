@@ -1,6 +1,6 @@
 /* 設定画面 */
 
-import { start } from "./start.js";
+import { start } from "./01_start.js";
 import { canvas_initialize } from "../../global_function/canvas_initialize.js";
 import { change_screen_to } from "../common_function/change_screen_to.js";
 import { world_map } from "../common_function/world_map.js";

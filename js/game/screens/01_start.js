@@ -1,11 +1,11 @@
 /* スタート画面 */
 
-import { game } from "./game.js";
-import { setting } from "./setting.js"
-import { change_screen_to } from "./../common_function/change_screen_to.js";
-import { draw_map } from "./../common_function/draw_map.js";
-import { world_map } from "./../common_function/world_map.js";
-import { canvas_initialize } from "./../../global_function/canvas_initialize.js";
+import { game } from "./03_game.js";
+import { setting } from "./02_setting.js"
+import { change_screen_to } from "../common_function/change_screen_to.js";
+import { draw_map } from "../common_function/draw_map.js";
+import { world_map } from "../common_function/world_map.js";
+import { canvas_initialize } from "../../global_function/canvas_initialize.js";
 
 export function start(global_info){
     let selected = {    // 選択されている項目
