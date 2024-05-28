@@ -42,7 +42,8 @@ export function game(global_info){
     let enemies = new ExpandedArray(); // 現在プレイヤーがいるマップに生存している敵キャラ (倒したり、マップ移動したら、ここからいなくなる)
 
     let main_loop = setInterval(function(){
-        const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でののサイズ
+        // 1 タイルの canvas 上でのサイズ。 NOTE: メインループの中で定義しないと、画面サイズ更新時に更新されない。
+        const TILE_SIZE_IN_CANVAS = global_info.canvas.width / FIELD_SIZE_IN_SCREEN;
 
         // canvas をリセット
         canvas_initialize(global_info.canvas, global_info.context);
