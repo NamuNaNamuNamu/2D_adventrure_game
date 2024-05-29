@@ -1,7 +1,7 @@
 /* main 関数 */
 // 一番最初に呼ばれる関数
 
-import * as game from "./game/screens/start.js";
+import { start } from "./game/screens/01_start.js";
 import { Key } from "./global_class/key.js";
 import { canvas_initialize } from "./global_function/canvas_initialize.js";
 
@@ -33,7 +33,7 @@ export function main(){
     }
     // 最後の画像 (yuusha_right2) の読み込みが完了したら、スタート画面の描画を開始する
     global_info.img.yuusha_right2.addEventListener("load", function(){
-        game.start(global_info);
+        start(global_info);
     }, false);
 
     function prepare_images(){
