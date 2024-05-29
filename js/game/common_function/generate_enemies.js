@@ -3,7 +3,7 @@
 import { enemy_species } from "./enemy_species.js";
 import { world_map } from "./world_map.js";
 
-import { Slime } from "../common_class/enemies/slime.js";
+import { Slime } from "../common_class/enemies/slime/slime.js";
 import { GrimReaper } from "../common_class/enemies/grim_reaper.js";
 import { BlackDragon } from "../common_class/enemies/black_dragon.js";
 
