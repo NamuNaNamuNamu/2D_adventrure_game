@@ -37,6 +37,7 @@
         * key.js <!-- 入力情報をつかさどる Key クラス -->
     - global_function <!-- プログラム全体で用いる関数 -->
         * canvas_initialize.js <!-- canvas をまっさらに初期化する関数 -->
+        * include.js <!-- クラスにメソッドを mixin するためのメソッド -->
     * call_main.js <!-- main 関数を呼ぶための関数(html と main 関数の仲介役) -->
     * constants.js <!-- プログラム全体で用いる定数はここに一覧で記載する -->
     * main.js <!-- 一番最初に呼ばれる関数 -->

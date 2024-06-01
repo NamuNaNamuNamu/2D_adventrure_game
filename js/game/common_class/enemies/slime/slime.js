@@ -8,6 +8,7 @@ import { attack } from "./methods/02_action/attack.js";
 import { damaged } from "./methods/02_action/damaged.js";
 import { is_damaged } from "./methods/02_action/damaged/is_damaged.js";
 import { is_blown_away } from "./methods/02_action/damaged/is_damaged/is_blown_away.js"
+import { include } from "../../../../global_function/include.js";
 
 const HIT_BOX = {   // スライムの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -148,13 +149,11 @@ export class Slime{
     }
 }
 
-// NOTE: これは、mixin 処理。Slime クラスに 2 つ目の引数の {} の中にあるメソッドを追加する
 // NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
-// TODO: うまいことメソッド化する。include みたいな。
-Object.assign(Slime.prototype, {move});
-Object.assign(Slime.prototype, {attack});
-Object.assign(Slime.prototype, {damaged});
-Object.assign(Slime.prototype, {check_movability});
-Object.assign(Slime.prototype, {should_go_back_inside_the_map});
-Object.assign(Slime.prototype, {is_damaged});
-Object.assign(Slime.prototype, {is_blown_away});
+include(Slime, move);
+include(Slime, attack);
+include(Slime, damaged);
+include(Slime, check_movability);
+include(Slime, should_go_back_inside_the_map);
+include(Slime, is_damaged);
+include(Slime, is_blown_away);
