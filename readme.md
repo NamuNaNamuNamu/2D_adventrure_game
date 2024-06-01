@@ -17,7 +17,6 @@
                 * magic_bullet.js <!-- 魔法弾クラス -->
             * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
             * enemy.js <!-- 敵キャラ大元クラス -->
-            * expanded_array.js <!-- 機能拡張した Array (組み込み) クラス -->
             * player.js <!-- プレイヤー Player クラス -->
         - common_function <!-- ゲーム内容における処理全般で使える関数 -->
             - world_map_parts <!-- マップのパーツ(16 × 16 サイズ = 1画面分) -->
@@ -34,6 +33,7 @@
             * 02_setting.js <!-- 設定画面 -->
             * 03_game.js <!-- プレイ画面 -->
     - global_class <!-- プログラム全体で用いるクラス -->
+        * expanded_array.js <!-- 機能拡張した Array (組み込み) クラス -->
         * key.js <!-- 入力情報をつかさどる Key クラス -->
     - global_function <!-- プログラム全体で用いる関数 -->
         * canvas_initialize.js <!-- canvas をまっさらに初期化する関数 -->
