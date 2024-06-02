@@ -55,7 +55,6 @@ export class Slime{
         this.width = HIT_BOX.width;                                                     // 敵キャラの当たり判定の横幅 (タイル基準。すなわち 1 ならタイル1枚分)
         this.height = HIT_BOX.height;                                                   // 敵キャラの当たり判定の縦幅 (タイル基準。すなわち 1 ならタイル1枚分)
         this.img = img;                                                                 // 写真 (original: 通常時, damaged: 被ダメージ時)
-        this.map_chip_which_enemy_cannot_move_on = MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON; // その敵キャラが移動できない床
         this.speed_coefficient = SPEED_COEFFICIENT;                                     // 移動スピード係数
         this.direction = 0;                                                             // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.color = COLOR.original;                                                    // 色(通常時: COLOR.original, 被ダメージ時: COLOR.damaged)
@@ -121,13 +120,22 @@ export class Slime{
             this.is_taking_a_break = true;
             return;
         }
-        if( 1 <= random_num && random_num <=  10) this.direction = DIRECTION.up;
-        if(11 <= random_num && random_num <=  20) this.direction = DIRECTION.down;
-        if(21 <= random_num && random_num <=  30) this.direction = DIRECTION.left;
-        if(31 <= random_num && random_num <=  40) this.direction = DIRECTION.right;
+
+        const decide_direction_from_random_int = (random_num) => {
+            if( 1 <= random_num && random_num <=  10) return DIRECTION.up;
+            if(11 <= random_num && random_num <=  20) return DIRECTION.down;
+            if(21 <= random_num && random_num <=  30) return DIRECTION.left;
+            if(31 <= random_num && random_num <=  40) return DIRECTION.right;
+        }
+        let direction = decide_direction_from_random_int(random_num);
 
         // 決めた方向に移動可能かどうか確かめる => 不可能なら、動作命令は解除 (this.in_action_frame.move を 0 に)
-        if(this.check_movability(this.direction) == false) this.in_action_frame.move = 0;
+        if(check_movability(this.x, this.y, this.world_map_x, this.world_map_y, direction, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON) == false){
+            this.in_action_frame.move = 0;
+            return;
+        }
+
+        this.direction = direction;
     }
 
     // 敵キャラを行動させる
@@ -178,6 +186,5 @@ export class Slime{
 include(Slime, move);
 include(Slime, attack);
 include(Slime, damaged);
-include(Slime, check_movability);
 include(Slime, is_damaged);
 include(Slime, is_blown_away);

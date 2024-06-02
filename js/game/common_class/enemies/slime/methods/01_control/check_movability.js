@@ -4,12 +4,18 @@
 // 移動しようとしている方向に、移動できない床がある場合 false を返す
 // 移動できる場合は、true を返す
 
+// 現在地から進もうとしている方向に進めるかどうか確かめる
+// 移動しようとしている方向に、移動できない床がある場合 false を返す
+// 移動できる場合は、true を返す
+// input: x, y, world_map_x, world_map_y, map_chip_which_enemy_cannot_move_on
+// output: bool
+
 import { world_map } from "./../../../../../common_function/world_map.js";
 
-export function check_movability(direction){
-    let current_map = world_map()[this.world_map_x][this.world_map_y].map_data; // 現在敵キャラが居るマップ
-    let enemy_x = this.x - OFFSET; // 敵キャラの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-    let enemy_y = this.y - OFFSET; // 敵キャラの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+export function check_movability(x, y, world_map_x, world_map_y, direction, map_chip_which_enemy_cannot_move_on){
+    let current_map = world_map()[world_map_x][world_map_y].map_data; // 現在敵キャラが居るマップ
+    let enemy_x = x - OFFSET; // 敵キャラの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
+    let enemy_y = y - OFFSET; // 敵キャラの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
 
     // 上方向に移動しようとしている場合
     if(direction == 0){
@@ -29,8 +35,10 @@ export function check_movability(direction){
         };
 
         // 敵キャラの半歩上にある床が移動できない場合
-        if(this.map_chip_which_enemy_cannot_move_on.includes(current_map[upper_left.y][upper_left.x]) || 
-        this.map_chip_which_enemy_cannot_move_on.includes(current_map[upper_right.y][upper_right.x])){
+        if(
+            map_chip_which_enemy_cannot_move_on.includes(current_map[upper_left.y][upper_left.x]) || 
+            map_chip_which_enemy_cannot_move_on.includes(current_map[upper_right.y][upper_right.x])
+        ){
             return false;
         }
     }
@@ -52,8 +60,10 @@ export function check_movability(direction){
         };
         
         // 敵キャラの 1歩下にある床が移動できない場合
-        if(this.map_chip_which_enemy_cannot_move_on.includes(current_map[lower_left.y][lower_left.x]) || 
-        this.map_chip_which_enemy_cannot_move_on.includes(current_map[lower_right.y][lower_right.x])){
+        if(
+            map_chip_which_enemy_cannot_move_on.includes(current_map[lower_left.y][lower_left.x]) || 
+            map_chip_which_enemy_cannot_move_on.includes(current_map[lower_right.y][lower_right.x])
+        ){
             return false;
         }
     }
@@ -71,7 +81,7 @@ export function check_movability(direction){
         if(enemy_y >= FIELD_SIZE_IN_SCREEN - 1) left.y = Math.floor(enemy_y);
 
         // 敵キャラの 1歩左にある床が移動できない場合
-        if(this.map_chip_which_enemy_cannot_move_on.includes(current_map[left.y][left.x])){
+        if(map_chip_which_enemy_cannot_move_on.includes(current_map[left.y][left.x])){
             return false;
         }
     }
@@ -89,7 +99,7 @@ export function check_movability(direction){
         if(enemy_y >= FIELD_SIZE_IN_SCREEN - 1) right.y = Math.floor(enemy_y);
 
         // 敵キャラの 1歩右にある床が移動できない場合
-        if(this.map_chip_which_enemy_cannot_move_on.includes(current_map[right.y][right.x])){
+        if(map_chip_which_enemy_cannot_move_on.includes(current_map[right.y][right.x])){
             return false;
         }
     }
