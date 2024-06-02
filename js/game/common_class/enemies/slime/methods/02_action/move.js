@@ -8,8 +8,6 @@ export function move(){
     // アクションが終了したら、動作は行わない (次の動作命令に向けて待機)
     if(this.in_action_frame.move <= 0) return;
 
-    const NUM_OF_ANIMATION_FLAME = 4;      // アニメーションの数 (4 フレーム 1 セットでアニメーションする)
-
     // 休憩じゃなければ移動する
     if(this.direction == 0 && !this.is_taking_a_break) this.y = Math.round((this.y - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
     if(this.direction == 1 && !this.is_taking_a_break) this.y = Math.round((this.y + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
@@ -27,6 +25,7 @@ export function move(){
     this.y = Math.round(this.y * 2) * 0.5;
 
     // アニメーションを動かす
+    const NUM_OF_ANIMATION_FLAME = 4;      // アニメーションの数 (4 フレーム 1 セットでアニメーションする)
     this.animation_frame = (this.animation_frame + 1) % NUM_OF_ANIMATION_FLAME; // アニメーションを 1 動かす
 
     // 休み状態を解消

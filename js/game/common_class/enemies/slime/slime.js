@@ -1,7 +1,5 @@
 /* スライムクラス */
 
-import { Enemy } from "../../enemy.js";
-import { should_go_back_inside_the_map } from "./methods/01_control/should_go_back_inside_the_map.js";
 import { check_movability } from "./methods/01_control/check_movability.js";
 import { move } from "./methods/02_action/move.js";
 import { attack } from "./methods/02_action/attack.js";
@@ -9,6 +7,7 @@ import { damaged } from "./methods/02_action/damaged.js";
 import { is_damaged } from "./methods/02_action/damaged/is_damaged.js";
 import { is_blown_away } from "./methods/02_action/damaged/is_damaged/is_blown_away.js"
 import { include } from "../../../../global_function/include.js";
+import { get_random_int } from "../../../../global_function/get_random_int.js";
 
 const HIT_BOX = {   // スライムの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -22,7 +21,6 @@ const COLOR = {
     damaged: 1,     // 被ダメージ時の色
 }
 const SPEED_COEFFICIENT = 0.111;        // スライムのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
-const NUM_OF_MOVE_PATTERN = 10;         // 全行動パターン数
 const ANIMATION_ORDER = [0, 1, 2, 1];  // アニメーションの流れ
 const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できない床
     2,  // 木付き草原
@@ -73,33 +71,60 @@ export class Slime{
     }
 
     // 行動を決定する
-    // game.js の メインループから呼び出される
-    // direction と、in_action_frame.move, is_taking_a_break を変更し、行動の準備をする。
-    // 1. 0 ~ NUM_OF_MOVE_PATTERN のうち 1 パターンに行動が決まる
-    //     1-1. パターンが 4 ~ NUM_OF_MOVE_PATTERN の場合、動かない
-    //     1-2. パターンが 0 ~ 3 の場合、0: 上, 1: 下, 2: 左, 3: 右 に動く
+    // COOL_TIME.move フレームに 1 度行う
+    // direction, in_action_frame.move, is_taking_a_break を変更し、行動の準備をする
+    // 1. マップ外にいる場合 (x 座標が 0 以下 もしくは 16 以上、または y 座標が 0 以下 もしくは 16 以上)
+    //     1-1. マップ内に戻るように動く
+    // 2. マップ内にいる場合 1 ~ 100 のうちランダムな整数を決める
+    //     2-1. ランダムな整数が 41 ~ 100 の場合、動かない
+    //     2-2. ランダムな整数が  1 ~  10 の場合、上に動く
+    //     2-3. ランダムな整数が 11 ~  20 の場合、下に動く
+    //     2-4. ランダムな整数が 21 ~  30 の場合、左に動く
+    //     2-5. ランダムな整数が 31 ~  40 の場合、右に動く
     control(player){
-        // 行動中であれば、受け付けない
+        // クールタイム (移動) 中であれば、受け付けない
         if(this.in_action_frame.move > 0) return;
 
         // クールタイムをリセット
         this.in_action_frame.move = COOL_TIME.move;
+    
+        const DIRECTION = {
+            up: 0,
+            down: 1,
+            left: 2,
+            right: 3
+        }
 
-        // 行動をランダムで決める
-        let pattern = Math.floor(Math.random() * NUM_OF_MOVE_PATTERN);
+        const on_the_bottom_edge = this.y >= FIELD_SIZE_IN_SCREEN;
+        const on_the_top_edge = this.y <= 0;
+        const on_the_right_edge = this.x >= FIELD_SIZE_IN_SCREEN;
+        const on_the_left_edge = this.x <= 0;
+        const on_the_outside_of_the_map = (on_the_bottom_edge || on_the_top_edge || on_the_right_edge || on_the_left_edge);
 
-        // 4 ~ NUM_OF_MOVE_PATTERN の場合 => 動かない
-        if(pattern >= 4 && pattern <= NUM_OF_MOVE_PATTERN){
-            this.is_taking_a_break = true;
+        const go_back_inside_the_map = () => {
+            if(on_the_bottom_edge) this.direction = DIRECTION.up;
+            if(on_the_top_edge)    this.direction = DIRECTION.down;
+            if(on_the_right_edge)  this.direction = DIRECTION.left;
+            if(on_the_left_edge)   this.direction = DIRECTION.right;
+        }
+
+        // マップ外にいる場合、マップ内に戻るように動く
+        // 戻ることを決めたなら、移動可能性チェックは必要ないので、メソッド終了
+        if(on_the_outside_of_the_map){
+            go_back_inside_the_map();
             return;
         }
 
-        // 0 ~ 3 の場合 => 0: 上, 1: 下, 2: 左, 3: 右
-        this.direction = pattern;
-
-        // マップの端に行ったら、マップ外に出ないように戻る
-        // 戻ることを決めたなら、移動可能性チェックは必要ないので、メソッド終了
-        if(this.should_go_back_inside_the_map()) return;
+        // マップ内にいる場合、ランダムに行動を決める
+        const random_num = get_random_int({min: 1, max: 100});
+        if(41 <= random_num && random_num <= 100){
+            this.is_taking_a_break = true;
+            return;
+        }
+        if( 1 <= random_num && random_num <=  10) this.direction = DIRECTION.up;
+        if(11 <= random_num && random_num <=  20) this.direction = DIRECTION.down;
+        if(21 <= random_num && random_num <=  30) this.direction = DIRECTION.left;
+        if(31 <= random_num && random_num <=  40) this.direction = DIRECTION.right;
 
         // 決めた方向に移動可能かどうか確かめる => 不可能なら、動作命令は解除 (this.in_action_frame.move を 0 に)
         if(this.check_movability(this.direction) == false) this.in_action_frame.move = 0;
@@ -154,6 +179,5 @@ include(Slime, move);
 include(Slime, attack);
 include(Slime, damaged);
 include(Slime, check_movability);
-include(Slime, should_go_back_inside_the_map);
 include(Slime, is_damaged);
 include(Slime, is_blown_away);
