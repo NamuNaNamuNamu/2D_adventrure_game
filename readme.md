@@ -10,8 +10,11 @@
                         - 01_control <!-- スライムクラスの control メソッド内で使われているメソッド -->
                         - 02_action <!-- スライムクラスの action メソッド内で使われているメソッド -->
                     * slime.js <!-- スライムクラス -->
-                * black_dragon.js <!-- ブラックドラゴンクラス -->
-                * grim_reaper.js <!-- しにがみクラス -->
+                - black_dragon <!-- ブラックドラゴン -->
+                    * black_dragon.js <!-- ブラックドラゴンクラス -->
+                - grim_reaper <!-- しにがみ -->
+                    * grim_reaper.js <!-- しにがみクラス -->
+                - z0_common_methods <!-- 敵キャラクラス共通で使うメソッド -->
             - enemy_weapon <!-- 敵の武器クラス -->
                 * fire.js <!-- 炎攻撃クラス -->
                 * magic_bullet.js <!-- 魔法弾クラス -->
