@@ -1,6 +1,6 @@
 /* ブラックドラゴンクラス */
 
-import { Fire } from "../../enemy_weapon/fire.js";
+import { Fire } from "./weapon/fire.js";
 import { Enemy } from "../../enemy.js";
 import { calculate_target_direction } from "../../../common_function/calculate_target_direction.js";
 

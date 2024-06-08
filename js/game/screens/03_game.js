@@ -6,7 +6,7 @@ import { change_screen_to } from "../common_function/change_screen_to.js";
 import { world_map } from "../common_function/world_map.js";
 import { draw_map } from "../common_function/draw_map.js";
 import { ExpandedArray } from "../../global_class/expanded_array.js"
-import { Player } from "../common_class/player.js";
+import { Player } from "../common_class/player/player.js";
 
 export function game(global_info){
     let player_img = {

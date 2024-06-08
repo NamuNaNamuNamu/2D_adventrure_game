@@ -11,16 +11,21 @@
                         - 02_action <!-- スライムクラスの action メソッド内で使われているメソッド -->
                     * slime.js <!-- スライムクラス -->
                 - black_dragon <!-- ブラックドラゴン -->
+                    - weapon
+                        * fire.js <!-- 炎攻撃クラス -->
                     * black_dragon.js <!-- ブラックドラゴンクラス -->
                 - grim_reaper <!-- しにがみ -->
+                    - weapon
+                        * magic_bullet.js <!-- 魔法弾クラス -->
                     * grim_reaper.js <!-- しにがみクラス -->
-                - z0_common_methods <!-- 敵キャラクラス共通で使うメソッド -->
-            - enemy_weapon <!-- 敵の武器クラス -->
-                * fire.js <!-- 炎攻撃クラス -->
-                * magic_bullet.js <!-- 魔法弾クラス -->
-            * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
-            * enemy.js <!-- 敵キャラ大元クラス -->
-            * player.js <!-- プレイヤー Player クラス -->
+            - player
+                - player_weapon
+                    * arrow.js <!-- プレイヤーの武器である弓矢 Arrow クラス -->
+                * player.js <!-- プレイヤー Player クラス -->
+            - z0_common_methods <!-- 敵キャラクラス共通で使うメソッド -->
+                - 01_control <!-- control メソッド内で使われるメソッド -->
+                    * check_movability.js 
+            * enemy.js <!-- 敵キャラ大元クラス --> <!-- TODO: それぞれメソッド毎に分けて、それを import するようにする。これは削除する。 -->
         - common_function <!-- ゲーム内容における処理全般で使える関数 -->
             - world_map_parts <!-- マップのパーツ(16 × 16 サイズ = 1画面分) -->
             * calculate_target_direction.js <!-- 目標の方向を算出する -->

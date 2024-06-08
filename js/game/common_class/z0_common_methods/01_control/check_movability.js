@@ -9,7 +9,7 @@
 //      移動しようとしている方向に、移動できない床がある場合 false を返す
 //      移動できる場合は、true を返す
 
-import { world_map } from "../../../../common_function/world_map.js";
+import { world_map } from "../../../common_function/world_map.js";
 
 export function check_movability(x, y, world_map_x, world_map_y, direction, map_chip_which_enemy_cannot_move_on){
     const on_the_bottom_edge = y >= FIELD_SIZE_IN_SCREEN;
@@ -18,7 +18,7 @@ export function check_movability(x, y, world_map_x, world_map_y, direction, map_
     const on_the_left_edge = x <= 0;
     const on_the_outside_of_the_map = (on_the_bottom_edge || on_the_top_edge || on_the_right_edge || on_the_left_edge);
 
-    if(on_the_outside_of_the_map) throw new Error("This method must be used only if the enemy is on the inside the map.");
+    if(on_the_outside_of_the_map) throw new Error("This method must be used only if it is on the inside the map.");
 
     const DIRECTION = {
         up: 0,

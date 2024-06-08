@@ -1,6 +1,6 @@
 /* スライムクラス */
 
-import { check_movability } from "../z0_common_methods/01_control/check_movability.js";
+import { check_movability } from "../../z0_common_methods/01_control/check_movability.js";
 import { move } from "./methods/02_action/move.js";
 import { attack } from "./methods/02_action/attack.js";
 import { damaged } from "./methods/02_action/damaged.js";
