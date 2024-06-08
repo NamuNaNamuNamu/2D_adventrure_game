@@ -1,11 +1,11 @@
 /* プレイヤーキャラクターを表すクラス */
 
 import { Arrow } from "./player_weapon/arrow.js";
-import { world_map } from "../../common_function/world_map.js";
 import { generate_enemies } from "../../common_function/generate_enemies.js";
 import { change_map_by_stairs_list } from "../../common_function/change_map_by_stairs_list.js";
 import { change_map_from_map_x0_y1_to_map_x0_y0 } from "../../common_function/change_map_from_map_x0_y1_to_map_x0_y0.js"
 import { ExpandedArray } from "../../../global_class/expanded_array.js";
+import { check_movability } from "../z0_common_methods/01_control/check_movability.js";
 
 const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.6,    // 横幅
@@ -20,7 +20,7 @@ const COLOR = {
     orange: 1,     // オレンジ
 }
 const PLAYER_SPEED_COEFFICIENT = 0.33;    // プレイヤーのスピードの係数
-const MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON = [ // プレイヤーが移動できない床
+const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // プレイヤーが移動できない床
     2,  // 木付き草原
     3,  // 岩付き草原
     7,  // 木付き深い草原
@@ -76,135 +76,45 @@ export class Player{
     // game.js の メインループから呼び出される
     // direction と、in_action_frame.move, in_action_frame.attack を変更し、行動の準備をする。
     control(key){
-        // 移動アクション中でなければ、操作を受け付ける
-        if(this.in_action_frame.move <= 0){
-            // w, a, s, d キー入力に応じて移動させる
-            if(key.is_w_pressed){ 
-                this.direction = 0; // 上方向
-                this.in_action_frame.move = COOL_TIME.move;
-                this.check_movability(); // 上方向に移動可能かどうか確かめる
-            }
-            else if(key.is_s_pressed){
-                this.direction = 1; // 下方向
-                this.in_action_frame.move = COOL_TIME.move;
-                this.check_movability(); // 下方向に移動可能かどうか確かめる
-            }
-            else if(key.is_a_pressed){
-                this.direction = 2; // 左方向
-                this.in_action_frame.move = COOL_TIME.move;
-                this.check_movability(); // 左方向に移動可能かどうか確かめる
-            }
-            else if(key.is_d_pressed){
-                this.direction = 3; // 右方向
-                this.in_action_frame.move = COOL_TIME.move;
-                this.check_movability(); // 右方向に移動可能かどうか確かめる
-            }
-        }
+        const accept_movement_operation = () => {
+            // クールタイム (移動) 中であれば、受け付けない
+            if(this.in_action_frame.move > 0) return;
 
-        // 攻撃アクション中でなければ、操作を受け付ける
-        if(this.in_action_frame.attack <= 0){
+            // キーが押されてなければ、何もしない
+            const no_keys_are_pressed = !(key.is_w_pressed || key.is_s_pressed || key.is_a_pressed || key.is_d_pressed);
+            if(no_keys_are_pressed) return;
+
+            const decide_direction_from_key_press = (key) => {
+                const DIRECTION = {
+                    up: 0,
+                    down: 1,
+                    left: 2,
+                    right: 3
+                }
+
+                if(key.is_w_pressed) return DIRECTION.up;
+                if(key.is_s_pressed) return DIRECTION.down;
+                if(key.is_a_pressed) return DIRECTION.left;
+                if(key.is_d_pressed) return DIRECTION.right;
+            }
+            this.direction = decide_direction_from_key_press(key);
+            
+            // 決めた方向に移動可能かどうか確かめる => 不可能なら、動作命令は解除 (this.in_action_frame.move を 0 に)
+            if(check_movability(this.x, this.y, this.world_map_x, this.world_map_y, this.direction, MAP_CHIP_WHICH_CANNOT_MOVE_ON) == false) return;
+
+            this.in_action_frame.move = COOL_TIME.move;
+        }
+        accept_movement_operation();
+
+        const accept_attack_operation = () => {
+            // クールタイム (攻撃) 中であれば、受け付けない
+            if(this.in_action_frame.attack > 0) return;
+
             if(key.is_enter_pressed){
-                this.in_action_frame.attack = COOL_TIME.attack; // 攻撃クールタイムがある
+                this.in_action_frame.attack = COOL_TIME.attack;
             }
         }
-    }
-
-    // 進もうとしている方向に進めるかどうか確かめる
-    // 進めない例: 移動しようとしている方向に、移動できない床がある場合など。
-    // 進めない場合、ここで、in_action_frame.move を 0 にすることで、移動を中止する
-    // control メソッド から呼び出される
-    check_movability(){
-        // 現在プレイヤーが居るマップ
-        let current_map = world_map()[this.world_map_x][this.world_map_y].map_data;
-        let player_x = this.x - OFFSET; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-        let player_y = this.y - OFFSET; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-
-        // 上方向に移動しようとしている場合
-        if(this.direction == 0){
-            // プレイヤーが上下において、ぴったりタイルの上に乗っている場合、絶対上に一歩進めるので、チェックはスルー
-            if(player_y % 1 == 0) return;
-
-            // もしマップの上端の場合、絶対上に一歩進めるので、チェックはスルー
-            if(player_y <= 0) return;
-            
-            let upper_left = { // プレイヤーの上の左側にある床（プレイヤーが左右において、ぴったりタイルの上に乗っている場合、真上の床を指す）
-                x: Math.floor(player_x),
-                y: player_y - 0.5,
-            };
-            let upper_right = { // プレイヤーの上の右側にある床（プレイヤーが左右において、ぴったりタイルの上に乗っている場合、真上の床を指す）
-                x: Math.ceil(player_x),
-                y: player_y - 0.5,
-            };
-
-            // プレイヤーの半歩上にある床が移動できない場合
-            if(MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON.includes(current_map[upper_left.y][upper_left.x]) || 
-            MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON.includes(current_map[upper_right.y][upper_right.x])){
-                // 移動は行わない
-                this.in_action_frame.move = 0;
-            }
-        }
-        // 下方向に移動しようとしている場合
-        if(this.direction == 1){
-            // プレイヤーが上下において、ぴったりタイルの上に乗っていない場合、絶対下に一歩進めるので、チェックはスルー
-            if(Math.abs((player_y) % 1) == 0.5) return; // NOTE: -0.5 % 1 は 0.5 ではなく、-0.5 となってしまうので、絶対値を取って回避。
-
-            // もしマップの下端の場合、絶対下に一歩進めるので、チェックはスルー
-            if(player_y >= FIELD_SIZE_IN_SCREEN - 1) return;
-
-            let lower_left = { // プレイヤーの下の左側にある床（プレイヤーが左右において、ぴったりタイルの上に乗っている場合、真下の床を指す）
-                x: Math.floor(player_x),
-                y: player_y + 1,
-            };
-            let lower_right = { // プレイヤーの下の右側にある床（プレイヤーが左右において、ぴったりタイルの上に乗っている場合、真下の床を指す）
-                x: Math.ceil(player_x),
-                y: player_y + 1,
-            };
-            
-            // プレイヤーの 1歩下にある床が移動できない場合
-            if(MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON.includes(current_map[lower_left.y][lower_left.x]) || 
-            MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON.includes(current_map[lower_right.y][lower_right.x])){
-                // 移動は行わない
-                this.in_action_frame.move = 0;
-            }
-        }
-        // 左方向に移動しようとしている場合
-        if(this.direction == 2){
-            // プレイヤーが左右において、ぴったりタイルの上に乗っていない場合、絶対左に一歩進めるので、チェックはスルー
-            if((player_x) % 1 == 0.5) return;
-
-            let left = { // プレイヤーの左の下側にある床（プレイヤーが上下において、ぴったりタイルの上に乗っている場合、真左の床を指す）
-                x: player_x - 1,
-                y: Math.ceil(player_y),
-            };
-
-            // もしマップの下端の場合、参照する床はプレイヤーの左の上側にする
-            if(player_y >= FIELD_SIZE_IN_SCREEN - 1) left.y = Math.floor(player_y);
-
-            // プレイヤーの 1歩左にある床が移動できない場合
-            if(MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON.includes(current_map[left.y][left.x])){
-                // 移動は行わない
-                this.in_action_frame.move = 0;
-            }
-        }
-        // 右方向に移動しようとしている場合
-        if(this.direction == 3){
-            // プレイヤーが左右において、ぴったりタイルの上に乗っていない場合、絶対右に一歩進めるので、チェックはスルー
-            if((player_x) % 1 == 0.5) return;
-
-            let right = { // プレイヤーの右の下側にある床（プレイヤーが上下において、ぴったりタイルの上に乗っている場合、真右の床を指す）
-                x: player_x + 1,
-                y: Math.ceil(player_y),
-            };
-
-            // もしマップの下端の場合、参照する床はプレイヤーの右の上側にする
-            if(player_y >= FIELD_SIZE_IN_SCREEN - 1) right.y = Math.floor(player_y);
-
-            // プレイヤーの 1歩右にある床が移動できない場合
-            if(MAP_CHIP_WHICH_PLAYER_CANNOT_MOVE_ON.includes(current_map[right.y][right.x])){
-                // 移動は行わない
-                this.in_action_frame.move = 0;
-            }
-        }
+        accept_attack_operation();
     }
 
     // 実際の動作処理を行う
