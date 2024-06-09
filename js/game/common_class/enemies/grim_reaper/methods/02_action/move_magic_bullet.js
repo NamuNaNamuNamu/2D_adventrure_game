@@ -1,6 +1,5 @@
-// 敵キャラの移動処理
-// action メソッドから呼び出される
 // 魔法弾を動かす
+// action メソッドから呼び出される
 
 export function move_magic_bullet(){
     for(let magic_bullet of this.magic_bullets){

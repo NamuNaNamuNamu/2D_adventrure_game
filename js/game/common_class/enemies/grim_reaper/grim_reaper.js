@@ -1,15 +1,15 @@
 /* しにがみクラス */
 
-import { MagicBullet } from "./weapon/magic_bullet.js";
-
 // 01_control
 import { check_movability } from "../../z0_common_methods/check_movability.js";
 import { get_random_int } from "../../../../global_function/get_random_int.js";
+import { face_the_direction_of_the_player_character } from "./methods/01_control/face_the_direction_of_the_player_character.js";
 
 // 02_action
 import { move } from "../../z0_common_methods/02_action/move.js";
 import { move_magic_bullet } from "./methods/02_action/move_magic_bullet.js";
 import { attack } from "../../z0_common_methods/02_action/attack.js";
+import { attack_by_magic_bullet } from "./methods/02_action/attack_by_magic_bullet.js";
 import { damaged } from "../../z0_common_methods/02_action/damaged.js";
 import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged.js";
 import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js"
@@ -27,15 +27,12 @@ const HIT_BOX = {   // しにがみの当たり判定 (タイル基準。すな�
 }
 const COOL_TIME = { // それぞれの行動のクールタイム
     move: 6,        // 移動クールタイム（1歩で 6フレーム費やす）
-    attack: 60,     // 攻撃クールタイム
 }
 const COLOR = {
     original: 0,    // 通常時の色 
     damaged: 1,     // 被ダメージ時の色
 }
-const MAGIC_BULLET_ATK_COEFFICIENT = 0.5;   // 直接、身体が触れる攻撃を 1 としたときの、魔法弾の攻撃倍率。atk に 掛け算する。
 const SPEED_COEFFICIENT = 0.166;            // しにがみのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
-const NUM_OF_MOVE_PATTERN = 7;              // 全行動パターン数
 const ANIMATION_ORDER = [0, 1, 2, 1];       // アニメーションの流れ
 const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // しにがみが移動できない床
     2,  // 木付き草原
@@ -87,20 +84,19 @@ export class GrimReaper{
     }
 
     // 行動を決定する
-    // game.js の メインループから呼び出される
-    // direction と、in_action_frame.move, is_taking_a_break を変更し、行動の準備をする。
-    // 1. COOL_TIME.move に 1 回、0 ~ NUM_OF_MOVE_PATTERN のうち 1 パターンに行動が決まる
-    //     1-1. パターンが 4 ~ NUM_OF_MOVE_PATTERN - 1 の場合、動かない
-    //     1-2. パターンが 0 ~ 3 の場合、プレイヤーキャラに近づくように動く
+    // COOL_TIME.move フレームに 1 度行う
+    // direction, in_action_frame.move, is_taking_a_break を変更し、行動の準備をする
+    // 1. マップ外にいる場合 (x 座標が 0 以下 もしくは 16 以上、または y 座標が 0 以下 もしくは 16 以上)
+    //     1-1. マップ内に戻るように動く
+    // 2. マップ内にいる場合 1 ~ 100 のうちランダムな整数を決める
+    //     2-1. ランダムな整数が 61 ~ 100 の場合、動かない
+    //     2-2. ランダムな整数が  1 ~  60 の場合、プレイヤーキャラに近づくように動く
     control(player){
         // クールタイム (移動) 中であれば、受け付けない
         if(this.in_action_frame.move > 0) return;
 
         // クールタイムをリセット
         this.in_action_frame.move = COOL_TIME.move;
-
-        // 行動をランダムで決める
-        let pattern = Math.floor(Math.random() * NUM_OF_MOVE_PATTERN);
 
         const DIRECTION = {
             up: 0,
@@ -161,42 +157,6 @@ export class GrimReaper{
         this.damaged(player, enemies, tile_size_in_canvas, MAP_CHIP_WHICH_CANNOT_MOVE_ON);
     }
 
-    // 攻撃判定
-    // プレイヤーキャラと重なったら、ダメージを与える
-    // action メソッドから呼び出される
-    attack_by_magic_bullet(player, tile_size_in_canvas){
-        // 魔法弾の攻撃判定
-        for(let magic_bullet of this.magic_bullets){
-            magic_bullet.attack(player, this.status.atk * MAGIC_BULLET_ATK_COEFFICIENT, tile_size_in_canvas);
-        }
-
-        // 向いている方向にプレイヤーキャラが通ったら、その方向に弾を発射する
-        // まず、プレイヤーキャラのいる位置 から 自分のいる位置を引く
-        let x_diff = player.x - this.x;
-        let y_diff = player.y - this.y;
-        if(this.in_action_frame.attack <= 0){
-            if(
-                this.direction == 0 && y_diff < 0 && x_diff == 0 || // 上を向いているとき
-                this.direction == 1 && y_diff > 0 && x_diff == 0 || // 下を向いているとき
-                this.direction == 2 && x_diff < 0 && y_diff == 0 || // 左を向いているとき
-                this.direction == 3 && x_diff > 0 && y_diff == 0    // 右を向いているとき
-            ){
-                this.in_action_frame.attack = COOL_TIME.attack;
-            }
-        }
-
-        // アクションが終了したら、動作は行わない
-        if(this.in_action_frame.attack <= 0) return;
-
-        if(this.in_action_frame.attack == COOL_TIME.attack){
-            let magic_bullet = new MagicBullet(this.x, this.y, this.direction, this.img.magic_bullet);
-            this.magic_bullets.push(magic_bullet);
-        }
-
-        // 攻撃フレームを 1 進める
-        this.in_action_frame.attack--;
-    }
-
     // 描画処理
     // game.js の メインループから呼び出される
     draw(_canvas, context, tile_size_in_canvas){
@@ -207,43 +167,18 @@ export class GrimReaper{
 
         this.draw_small_enemy(_canvas, context, tile_size_in_canvas);
     }
-
-    // プレイヤーキャラのいる方向を向く
-    // control メソッドから呼び出される
-    face_the_direction_of_the_player_character(player){
-        // まず、プレイヤーキャラのいる位置 から 自分のいる位置を引く
-        let x_diff = player.x - this.x;
-        let y_diff = player.y - this.y;
-
-        // 全く同じ位置にいる場合は、動かなくていい
-        if(x_diff == 0 && y_diff == 0){ 
-            this.is_taking_a_break = true;
-            return;
-        }
-
-        // x 方向 の方が距離の差がある場合 (x 方向 と y 方向 の距離の差が同じ場合も含む)
-        if(Math.abs(x_diff) >= Math.abs(y_diff)){
-            // プレイヤーキャラが自分から見て左にいるなら左を向く
-            if(x_diff < 0) this.direction = 2;
-            // プレイヤーキャラが自分から見て右にいるなら右を向く
-            else this.direction = 3;
-        }
-        // y 方向 の方が距離の差がある場合
-        else{
-            // プレイヤーキャラが自分から見て上にいるなら上を向く
-            if(y_diff < 0) this.direction = 0;
-            // プレイヤーキャラが自分から見て下にいるなら下を向く
-            else this.direction = 1;
-        }
-    }
 }
 
 // NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
+
+// 01_control
+include(GrimReaper, face_the_direction_of_the_player_character);
 
 // 02_action
 include(GrimReaper, move);
 include(GrimReaper, move_magic_bullet);
 include(GrimReaper, attack);
+include(GrimReaper, attack_by_magic_bullet);
 include(GrimReaper, damaged);
 include(GrimReaper, is_damaged);
 include(GrimReaper, is_blown_away);
