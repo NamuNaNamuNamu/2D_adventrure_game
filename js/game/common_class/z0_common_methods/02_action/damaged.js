@@ -2,19 +2,20 @@
 // プレイヤーキャラの弓矢が重なったらダメージを受けて、当たった弓矢を消去
 // action メソッドから呼び出される
 
-import { is_overlapping_with } from "../../../../z0_common_methods/02_action/is_overlapping_with.js";
-
 const COLOR = {
     original: 0,    // 通常時の色 
     damaged: 1,     // 被ダメージ時の色
 }
 
-export function damaged(player, enemies, tile_size_in_canvas){
+export function damaged(player, enemies, tile_size_in_canvas, map_chip_which_enemy_cannot_move_on){
     // 弓矢が自分に当たったら
     for(let arrow of player.arrows){
         if(this.is_overlapping_with(arrow, tile_size_in_canvas)){
             // プレイヤーキャラの攻撃力分、敵キャラの体力を減らす
             this.is_damaged(player.status.atk, enemies, arrow, player.arrows);
+
+            // 弓矢を当てられた方向と逆に吹っ飛ばされる
+            this.is_blown_away(arrow, map_chip_which_enemy_cannot_move_on);
         }
     }
 

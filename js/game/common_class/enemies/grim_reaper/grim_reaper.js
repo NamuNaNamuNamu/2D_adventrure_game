@@ -1,7 +1,25 @@
 /* しにがみクラス */
 
 import { MagicBullet } from "./weapon/magic_bullet.js";
-import { Enemy } from "../../enemy.js";
+
+// 01_control
+import { check_movability } from "../../z0_common_methods/check_movability.js";
+import { get_random_int } from "../../../../global_function/get_random_int.js";
+
+// 02_action
+import { move } from "../../z0_common_methods/02_action/move.js";
+import { move_magic_bullet } from "./methods/02_action/move_magic_bullet.js";
+import { attack } from "../../z0_common_methods/02_action/attack.js";
+import { damaged } from "../../z0_common_methods/02_action/damaged.js";
+import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged.js";
+import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js"
+
+// 03_draw
+import { draw_small_enemy } from "../../z0_common_methods/03_draw/draw_small_enemy.js";
+
+// その他
+import { include } from "../../../../global_function/include.js";
+import { is_overlapping_with } from "../../z0_common_methods/is_overlapping_with.js";
 
 const HIT_BOX = {   // しにがみの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -11,11 +29,15 @@ const COOL_TIME = { // それぞれの行動のクールタイム
     move: 6,        // 移動クールタイム（1歩で 6フレーム費やす）
     attack: 60,     // 攻撃クールタイム
 }
+const COLOR = {
+    original: 0,    // 通常時の色 
+    damaged: 1,     // 被ダメージ時の色
+}
 const MAGIC_BULLET_ATK_COEFFICIENT = 0.5;   // 直接、身体が触れる攻撃を 1 としたときの、魔法弾の攻撃倍率。atk に 掛け算する。
 const SPEED_COEFFICIENT = 0.166;            // しにがみのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
 const NUM_OF_MOVE_PATTERN = 7;              // 全行動パターン数
 const ANIMATION_ORDER = [0, 1, 2, 1];       // アニメーションの流れ
-const MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON = [ // しにがみが移動できない床
+const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // しにがみが移動できない床
     2,  // 木付き草原
     3,  // 岩付き草原
     7,  // 木付き深い草原
@@ -39,15 +61,28 @@ const MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON = [ // しにがみが移動で�
     41, // 深い海
 ];
 
-export class GrimReaper extends Enemy{
+export class GrimReaper{
     constructor(x, y, world_map_x, world_map_y, img, status){
-        const location = {
-            x: x,
-            y: y,
-            world_map_x: world_map_x,
-            world_map_y: world_map_y
+        this.x = x;                                                            // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 敵キャラの画像の中心の座標とする
+        this.y = y;                                                            // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 敵キャラの画像の中心の座標とする
+        this.world_map_x = world_map_x;                                        // その敵キャラが生息する ワールドマップの x 座標
+        this.world_map_y = world_map_y;                                        // その敵キャラが生息する ワールドマップの y 座標
+        this.width = HIT_BOX.width;                                                     // 敵キャラの当たり判定の横幅 (タイル基準。すなわち 1 ならタイル1枚分)
+        this.height = HIT_BOX.height;                                                   // 敵キャラの当たり判定の縦幅 (タイル基準。すなわち 1 ならタイル1枚分)
+        this.img = img;                                                                 // 写真 (original: 通常時, damaged: 被ダメージ時)
+        this.speed_coefficient = SPEED_COEFFICIENT;                                     // 移動スピード係数
+        this.direction = 0;                                                             // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
+        this.color = COLOR.original;                                                    // 色(通常時: COLOR.original, 被ダメージ時: COLOR.damaged)
+        this.animation_frame = 0;                                                       // 写真のアニメーション (0 と 1 と 2 と 3 を 交互に変えてアニメーションを実現する)
+        this.animation_order = ANIMATION_ORDER;                                         // アニメーションの流れ
+        this.in_action_frame = {
+            move: 0,                                                                    // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
+            attack: 0,                                                                  // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
+            damaged: 0,                                                                 // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
         };
-        super(location, HIT_BOX, img, MAP_CHIP_WHICH_GRIM_REAPER_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
+        this.is_taking_a_break = false;                                                 // 行動しない状態かどうか
+        this.status = status;                                                           // 敵キャラのステータス (hp, 攻撃力(atk))
+
         this.magic_bullets = [];    // 放った魔法弾
     }
 
@@ -58,7 +93,7 @@ export class GrimReaper extends Enemy{
     //     1-1. パターンが 4 ~ NUM_OF_MOVE_PATTERN - 1 の場合、動かない
     //     1-2. パターンが 0 ~ 3 の場合、プレイヤーキャラに近づくように動く
     control(player){
-        // 行動中であれば、受け付けない
+        // クールタイム (移動) 中であれば、受け付けない
         if(this.in_action_frame.move > 0) return;
 
         // クールタイムをリセット
@@ -67,45 +102,69 @@ export class GrimReaper extends Enemy{
         // 行動をランダムで決める
         let pattern = Math.floor(Math.random() * NUM_OF_MOVE_PATTERN);
 
-        // 4 ~ NUM_OF_MOVE_PATTERN - 1 の場合 => 動かない
-        if(pattern >= 4 && pattern <= NUM_OF_MOVE_PATTERN){
-            this.is_taking_a_break = true;
+        const DIRECTION = {
+            up: 0,
+            down: 1,
+            left: 2,
+            right: 3
         }
-        // 0 ~ 3 の場合 => プレイヤーキャラに近づくように動く
+
+        const on_the_bottom_edge = this.y >= FIELD_SIZE_IN_SCREEN;
+        const on_the_top_edge = this.y <= 0;
+        const on_the_right_edge = this.x >= FIELD_SIZE_IN_SCREEN;
+        const on_the_left_edge = this.x <= 0;
+        const on_the_outside_of_the_map = (on_the_bottom_edge || on_the_top_edge || on_the_right_edge || on_the_left_edge);
+
+        const go_back_inside_the_map = () => {
+            if(on_the_bottom_edge) this.direction = DIRECTION.up;
+            if(on_the_top_edge)    this.direction = DIRECTION.down;
+            if(on_the_right_edge)  this.direction = DIRECTION.left;
+            if(on_the_left_edge)   this.direction = DIRECTION.right;
+        }
+
+        // マップ外にいる場合、マップ内に戻るように動く
+        // 戻ることを決めたなら、移動可能性チェックは必要ないので、メソッド終了
+        if(on_the_outside_of_the_map){
+            go_back_inside_the_map();
+            return;
+        }
+
+        // マップ内にいる場合、ランダムに行動を決める
+        const random_num = get_random_int({min: 1, max: 100});
+        if(61 <= random_num && random_num <= 100){
+            this.is_taking_a_break = true;
+            return;
+        }
         else{
             this.face_the_direction_of_the_player_character(player);
         }
 
-        // 行動決めで「おやすみ」が決まった場合、
-        // マップ外にでないようにする処理と、移動可能性チェックは必要ないので、メソッド終了
-        if(this.is_taking_a_break) return;
-
-        // マップの端に行ったら、マップ外に出ないように戻る
-        // 戻ることを決めたなら、移動可能性チェックは必要ないので、メソッド終了
-        if(this.should_go_back_inside_the_map()) return;
-
         // 決めた方向に移動可能かどうか確かめる => 不可能なら、動作命令は解除 (this.in_action_frame.move を 0 に)
-        if(this.check_movability(this.direction) == false) this.in_action_frame.move = 0;
+        if(check_movability(this.x, this.y, this.world_map_x, this.world_map_y, this.direction, MAP_CHIP_WHICH_CANNOT_MOVE_ON) == false){
+            this.in_action_frame.move = 0;
+            return;
+        }
     }
 
-    // 敵キャラの移動処理
-    // action メソッドから呼び出される
-    // 魔法弾を動かす
-    move(){
-        // 魔法弾を動かす
-        for(let magic_bullet of this.magic_bullets){
-            magic_bullet.move(this.magic_bullets);
-        }
-        // Enemy クラスの move メソッドを呼ぶ
-        super.move()
+    // 敵キャラを行動させる
+    // game.js の メインループから呼び出される
+    action(player, enemies, tile_size_in_canvas){
+        // 移動系
+        this.move();
+        this.move_magic_bullet();
+
+        // 攻撃系
+        this.attack(player, tile_size_in_canvas);
+        this.attack_by_magic_bullet(player, tile_size_in_canvas);
+
+        // 被ダメージ系
+        this.damaged(player, enemies, tile_size_in_canvas, MAP_CHIP_WHICH_CANNOT_MOVE_ON);
     }
 
     // 攻撃判定
     // プレイヤーキャラと重なったら、ダメージを与える
     // action メソッドから呼び出される
-    attack(player, tile_size_in_canvas){
-        super.attack(player, tile_size_in_canvas);
-
+    attack_by_magic_bullet(player, tile_size_in_canvas){
         // 魔法弾の攻撃判定
         for(let magic_bullet of this.magic_bullets){
             magic_bullet.attack(player, this.status.atk * MAGIC_BULLET_ATK_COEFFICIENT, tile_size_in_canvas);
@@ -140,14 +199,13 @@ export class GrimReaper extends Enemy{
 
     // 描画処理
     // game.js の メインループから呼び出される
-    draw(canvas, context, tile_size_in_canvas){
+    draw(_canvas, context, tile_size_in_canvas){
         // 魔法弾の描画
         for(let magic_bullet of this.magic_bullets){
-            magic_bullet.draw(canvas, context, tile_size_in_canvas);
+            magic_bullet.draw(_canvas, context, tile_size_in_canvas);
         }
 
-        // Enemy クラスの draw メソッドを呼ぶ
-        super.draw(canvas, context, tile_size_in_canvas);
+        this.draw_small_enemy(_canvas, context, tile_size_in_canvas);
     }
 
     // プレイヤーキャラのいる方向を向く
@@ -179,3 +237,19 @@ export class GrimReaper extends Enemy{
         }
     }
 }
+
+// NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
+
+// 02_action
+include(GrimReaper, move);
+include(GrimReaper, move_magic_bullet);
+include(GrimReaper, attack);
+include(GrimReaper, damaged);
+include(GrimReaper, is_damaged);
+include(GrimReaper, is_blown_away);
+
+// 03_draw
+include(GrimReaper, draw_small_enemy);
+
+// その他
+include(GrimReaper, is_overlapping_with);

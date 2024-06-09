@@ -1,14 +1,22 @@
 /* スライムクラス */
 
-import { check_movability } from "../../z0_common_methods/01_control/check_movability.js";
-import { move } from "./methods/02_action/move.js";
-import { attack } from "./methods/02_action/attack.js";
-import { damaged } from "./methods/02_action/damaged.js";
-import { is_damaged } from "./methods/02_action/damaged/is_damaged.js";
-import { is_blown_away } from "./methods/02_action/damaged/is_damaged/is_blown_away.js"
-import { include } from "../../../../global_function/include.js";
+// 01_control
+import { check_movability } from "../../z0_common_methods/check_movability.js";
 import { get_random_int } from "../../../../global_function/get_random_int.js";
-import { is_overlapping_with } from "../../z0_common_methods/02_action/is_overlapping_with.js";
+
+// 02_action
+import { move } from "../../z0_common_methods/02_action/move.js";
+import { attack } from "../../z0_common_methods/02_action/attack.js";
+import { damaged } from "../../z0_common_methods/02_action/damaged.js";
+import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged.js";
+import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js"
+
+// 03_draw
+import { draw_small_enemy } from "../../z0_common_methods/03_draw/draw_small_enemy.js";
+
+// その他
+import { include } from "../../../../global_function/include.js";
+import { is_overlapping_with } from "../../z0_common_methods/is_overlapping_with.js";
 
 const HIT_BOX = {   // スライムの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -23,7 +31,7 @@ const COLOR = {
 }
 const SPEED_COEFFICIENT = 0.111;        // スライムのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
 const ANIMATION_ORDER = [0, 1, 2, 1];  // アニメーションの流れ
-const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // スライムが移動できない床
+const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // スライムが移動できない床
     2,  // 木付き草原
     3,  // 岩付き草原
     7,  // 木付き深い草原
@@ -131,7 +139,7 @@ export class Slime{
         let direction = decide_direction_from_random_int(random_num);
 
         // 決めた方向に移動可能かどうか確かめる => 不可能なら、動作命令は解除 (this.in_action_frame.move を 0 に)
-        if(check_movability(this.x, this.y, this.world_map_x, this.world_map_y, direction, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON) == false){
+        if(check_movability(this.x, this.y, this.world_map_x, this.world_map_y, direction, MAP_CHIP_WHICH_CANNOT_MOVE_ON) == false){
             this.in_action_frame.move = 0;
             return;
         }
@@ -144,49 +152,27 @@ export class Slime{
     action(player, enemies, tile_size_in_canvas){
         this.move();
         this.attack(player, tile_size_in_canvas);
-        this.damaged(player, enemies, tile_size_in_canvas);
+        this.damaged(player, enemies, tile_size_in_canvas, MAP_CHIP_WHICH_CANNOT_MOVE_ON);
     }
 
     // 描画処理
     // game.js の メインループから呼び出される
-    draw(canvas, context, tile_size_in_canvas){
-        const TOP_LEFT_CORNER_AXIS = {          // マップチップ本体の左上端
-            x: 0,
-            y: 0,
-        };
-        const TILE = {
-            width: 32,  // マップチップ画像上でのマップチップ 1つ分の幅
-            height: 32, // マップチップ画像上でのマップチップ 1つ分の幅
-        };
-        const DIRECTION_ORDER = [3, 0, 1, 2]; // 向きと写真の順番を合わせるための配列
-        const MARGIN_LEFT = 6;
-        const MARGIN_RIGHT = 6;
-        const MARGIN_TOP = 12;
-        const MARGIN_BOTTOM = 0;
-
-        let enemy_img;
-        // 色を画像に反映
-        if(this.color == COLOR.original) enemy_img = this.img.original;
-        else if(this.color == COLOR.damaged) enemy_img = this.img.damaged;
-
-        context.drawImage(
-            enemy_img, // img
-            TOP_LEFT_CORNER_AXIS.x + MARGIN_LEFT + this.animation_order[this.animation_frame] * TILE.width,  // sx (元画像の切り抜き始点 x)
-            TOP_LEFT_CORNER_AXIS.y + MARGIN_TOP + DIRECTION_ORDER[this.direction] * TILE.height,  // sy (元画像の切り抜き始点 y)
-            TILE.width - (MARGIN_LEFT + MARGIN_RIGHT),  // s_width (元画像の切り抜きサイズ 横幅)
-            TILE.height - (MARGIN_TOP + MARGIN_BOTTOM),  // s_height (元画像の切り抜きサイズ 縦幅)
-            this.x * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dx (canvas の描画開始位置 x)
-            this.y * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dy (canvas の描画開始位置 y)
-            tile_size_in_canvas,  // d_width (canvas の描画サイズ 横幅)
-            tile_size_in_canvas,  // d_height (canvas の描画サイズ 縦幅)
-        );
+    draw(_canvas, context, tile_size_in_canvas){
+        this.draw_small_enemy(_canvas, context, tile_size_in_canvas);
     }
 }
 
 // NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
+
+// 02_action
 include(Slime, move);
 include(Slime, attack);
 include(Slime, damaged);
 include(Slime, is_damaged);
 include(Slime, is_blown_away);
+
+// 03_draw
+include(Slime, draw_small_enemy);
+
+// その他
 include(Slime, is_overlapping_with);

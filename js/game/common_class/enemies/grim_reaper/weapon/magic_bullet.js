@@ -42,7 +42,7 @@ export class MagicBullet{
     }
 
     // 魔法弾の描画処理
-    draw(canvas, context, tile_size_in_canvas){
+    draw(_canvas, context, tile_size_in_canvas){
         context.drawImage(
             this.img, // img
             this.x * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dx (canvas の描画開始位置 x)

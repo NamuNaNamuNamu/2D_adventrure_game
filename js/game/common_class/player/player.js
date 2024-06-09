@@ -5,7 +5,7 @@ import { generate_enemies } from "../../common_function/generate_enemies.js";
 import { change_map_by_stairs_list } from "../../common_function/change_map_by_stairs_list.js";
 import { change_map_from_map_x0_y1_to_map_x0_y0 } from "../../common_function/change_map_from_map_x0_y1_to_map_x0_y0.js"
 import { ExpandedArray } from "../../../global_class/expanded_array.js";
-import { check_movability } from "../z0_common_methods/01_control/check_movability.js";
+import { check_movability } from "../z0_common_methods/check_movability.js";
 
 const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.6,    // 横幅

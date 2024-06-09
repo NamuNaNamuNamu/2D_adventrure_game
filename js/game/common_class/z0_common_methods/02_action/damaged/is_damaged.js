@@ -17,7 +17,4 @@ export function is_damaged(damage, enemies, arrow, arrows){
         enemies.delete(this);
         return;
     }
-
-    // 弓矢を当てられた方向と逆に吹っ飛ばされる
-    this.is_blown_away(arrow);
 }

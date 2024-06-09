@@ -13,7 +13,7 @@
 //      移動しようとしている方向に、移動できない床がある場合 false を返す
 //      移動できる場合は、true を返す
 
-import { world_map } from "../../../common_function/world_map.js";
+import { world_map } from "../../common_function/world_map.js";
 
 export function check_movability(x, y, world_map_x, world_map_y, direction, map_chip_which_enemy_cannot_move_on){
     // <前提処理>
