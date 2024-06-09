@@ -2,6 +2,8 @@
 // プレイヤーキャラの弓矢が重なったらダメージを受けて、当たった弓矢を消去
 // action メソッドから呼び出される
 
+import { is_overlapping_with } from "../../../../z0_common_methods/02_action/is_overlapping_with.js";
+
 const COLOR = {
     original: 0,    // 通常時の色 
     damaged: 1,     // 被ダメージ時の色
@@ -10,13 +12,7 @@ const COLOR = {
 export function damaged(player, enemies, tile_size_in_canvas){
     // 弓矢が自分に当たったら
     for(let arrow of player.arrows){
-        // TODO: この if 文は長すぎるので、「2 つのオブジェクトが重なっているかどうか」を判定するメソッドを作って、それを使う。
-        if(
-            arrow.x * tile_size_in_canvas + arrow.width * tile_size_in_canvas * 0.5 >= this.x * tile_size_in_canvas - this.width * tile_size_in_canvas * 0.5 &&
-            this.x * tile_size_in_canvas + this.width * tile_size_in_canvas * 0.5 >= arrow.x * tile_size_in_canvas - arrow.width * tile_size_in_canvas * 0.5 &&
-            arrow.y * tile_size_in_canvas + arrow.height * tile_size_in_canvas * 0.5 >= this.y * tile_size_in_canvas - this.height * tile_size_in_canvas * 0.5 &&
-            this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 0.5 >= arrow.y * tile_size_in_canvas - arrow.height * tile_size_in_canvas * 0.5
-        ){
+        if(this.is_overlapping_with(arrow, tile_size_in_canvas)){
             // プレイヤーキャラの攻撃力分、敵キャラの体力を減らす
             this.is_damaged(player.status.atk, enemies, arrow, player.arrows);
         }

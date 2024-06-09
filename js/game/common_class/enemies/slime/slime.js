@@ -8,6 +8,7 @@ import { is_damaged } from "./methods/02_action/damaged/is_damaged.js";
 import { is_blown_away } from "./methods/02_action/damaged/is_damaged/is_blown_away.js"
 import { include } from "../../../../global_function/include.js";
 import { get_random_int } from "../../../../global_function/get_random_int.js";
+import { is_overlapping_with } from "../../z0_common_methods/02_action/is_overlapping_with.js";
 
 const HIT_BOX = {   // スライムの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -80,7 +81,7 @@ export class Slime{
     //     2-3. ランダムな整数が 11 ~  20 の場合、下に動く
     //     2-4. ランダムな整数が 21 ~  30 の場合、左に動く
     //     2-5. ランダムな整数が 31 ~  40 の場合、右に動く
-    control(player){
+    control(_player){
         // クールタイム (移動) 中であれば、受け付けない
         if(this.in_action_frame.move > 0) return;
 
@@ -188,3 +189,4 @@ include(Slime, attack);
 include(Slime, damaged);
 include(Slime, is_damaged);
 include(Slime, is_blown_away);
+include(Slime, is_overlapping_with);
