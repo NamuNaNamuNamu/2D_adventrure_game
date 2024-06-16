@@ -20,6 +20,7 @@ import { draw_small_enemy } from "../../z0_common_methods/03_draw/draw_small_ene
 // その他
 import { include } from "../../../../global_function/include.js";
 import { is_overlapping_with } from "../../z0_common_methods/is_overlapping_with.js";
+import { ExpandedArray } from "../../../../global_class/expanded_array.js";
 
 const HIT_BOX = {   // しにがみの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -80,7 +81,7 @@ export class GrimReaper{
         this.is_taking_a_break = false;                                                 // 行動しない状態かどうか
         this.status = status;                                                           // 敵キャラのステータス (hp, 攻撃力(atk))
 
-        this.magic_bullets = [];    // 放った魔法弾
+        this.magic_bullets = new ExpandedArray();    // 放った魔法弾
     }
 
     // 行動を決定する
