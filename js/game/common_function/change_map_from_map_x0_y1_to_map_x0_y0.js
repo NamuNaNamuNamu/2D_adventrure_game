@@ -24,7 +24,7 @@ export function change_map_from_map_x0_y1_to_map_x0_y0(player_world_map_x, playe
     }
 
     // 隣り合ってる重複を消去
-    let duplicates = []
+    let duplicates = [];
     for(let i = 0; i < filtered_foot_print.length - 1; i++){
         if(
             filtered_foot_print[i].x == filtered_foot_print[i + 1].x &&
