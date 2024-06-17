@@ -1,4 +1,5 @@
 /* 敵キャラ全てが継承する大元クラス */
+// TODO: それぞれメソッド毎に分けて、それを import するようにする。これは削除する。 
 
 import { world_map } from "./../common_function/world_map.js";
 
