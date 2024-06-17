@@ -1,25 +1,40 @@
 /* プレイヤーキャラクターを表すクラス */
 
-import { Arrow } from "./player_weapon/arrow.js";
-import { generate_enemies } from "../../common_function/generate_enemies.js";
-import { change_map_by_stairs_list } from "../../common_function/change_map_by_stairs_list.js";
-import { change_map_from_map_x0_y1_to_map_x0_y0 } from "../../common_function/change_map_from_map_x0_y1_to_map_x0_y0.js"
-import { ExpandedArray } from "../../../global_class/expanded_array.js";
+// 01_control
 import { check_movability } from "../z0_common_methods/check_movability.js";
+
+// 02_action
+import { move } from "./methods/02_action/move.js";
+import { execute_common_process_by_map_change } from "./methods/02_action/move/common_function/execute_common_process_by_map_change.js";
+import { add_foot_print } from "./methods/02_action/move/add_foot_print.js";
+import { check_map_change } from "./methods/02_action/move/check_map_change.js";
+import { check_map_change_by_stairs } from "./methods/02_action/move/check_map_change_by_stairs.js";
+
+import { attack } from "./methods/02_action/attack.js";
+import { damaged } from "./methods/02_action/damaged.js";
+
+// 03_draw
+import { draw_arrows } from "./methods/03_draw/draw_arrows.js";
+import { draw_hp_bar } from "./methods/03_draw/draw_hp_bar.js";
+import { draw_myself } from "./methods/03_draw/draw_myself.js";
+
+// その他
+import { include } from "../../../global_function/include.js";
+import { ExpandedArray } from "../../../global_class/expanded_array.js";
+import { is_damaged } from "./methods/is_damaged.js";
 
 const HIT_BOX = {  // プレイヤーキャラの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.6,    // 横幅
     height: 0.6,   // 縦幅
 }
-const COOL_TIME = { // それぞれの行動のクールタイム
+export const COOL_TIME = { // それぞれの行動のクールタイム
     move: 3,        // 移動クールタイム（1歩で 3 フレーム費やす）
     attack: 10      // 攻撃クールタイム
 }
-const COLOR = {
+export const COLOR = {
     blue: 0,       // 青 
     orange: 1,     // オレンジ
 }
-const PLAYER_SPEED_COEFFICIENT = 0.33;    // プレイヤーのスピードの係数
 const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // プレイヤーが移動できない床
     2,  // 木付き草原
     3,  // 岩付き草原
@@ -45,8 +60,6 @@ const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // プレイヤーが移動できない�
 ];
 
 export class Player{
-    
-    // コンストラクタ
     constructor(x, y, world_map_x, world_map_y, img, hp, atk){
         this.x = x;                             // x 座標(タイル基準 = 一番左が 0, 一番右が 16), プレイヤーの画像の中心の座標とする
         this.y = y;                             // y 座標(タイル基準 = 一番上が 0, 一番下が 16), プレイヤーの画像の中心の座標とする
@@ -125,261 +138,31 @@ export class Player{
         this.damaged();
     }
 
-    // 弓矢とプレイヤーキャラを実際に動かす。
-    // 弓矢は問答無用で動くが、プレイヤーキャラは、in_action_frame.move が 1 以上のときに移動する
-    // action メソッドから呼び出される
-    move(img, enemies){
-        // 弓矢を動かす
-        for(let arrow of this.arrows){
-            arrow.move(this.arrows);
-        }
-
-        // アクションが終了したら、プレイヤーの動作は行わない (次の動作命令に向けて待機)
-        if(this.in_action_frame.move <= 0) return;
-
-        // キー入力に応じて移動させる
-        if(this.direction == 0) this.y = Math.round((this.y - MINIMUM_STEP * PLAYER_SPEED_COEFFICIENT) * 100) / 100;
-        if(this.direction == 1) this.y = Math.round((this.y + MINIMUM_STEP * PLAYER_SPEED_COEFFICIENT) * 100) / 100;
-        if(this.direction == 2) this.x = Math.round((this.x - MINIMUM_STEP * PLAYER_SPEED_COEFFICIENT) * 100) / 100;
-        if(this.direction == 3) this.x = Math.round((this.x + MINIMUM_STEP * PLAYER_SPEED_COEFFICIENT) * 100) / 100;
-
-        // 動作フレームを 1 進める
-        this.in_action_frame.move--;
-        // 動作しきったタイミングで、
-        if(this.in_action_frame.move == 0){
-            // 座標の誤差を補正する
-            this.x = Math.round(this.x * 2) * 0.5;
-            this.y = Math.round(this.y * 2) * 0.5;
-            // 足跡を追加する
-            this.add_foot_print();
-            // アニメーションを 1 動かす(0 なら 1 に。1 なら 0 に)
-            this.animation_frame = (this.animation_frame + 1) % 2;
-        }
-
-        // マップ移動処理
-        this.check_map_change(img, enemies);
-
-        // 階段でのマップ移動処理
-        this.check_map_change_by_stairs(img, enemies);
-    }
-
-    // プレイヤーの攻撃命令 を受けて、弓矢を生成する
-    // action メソッドから呼び出される
-    attack(){
-        // アクションが終了したら、動作は行わない
-        if(this.in_action_frame.attack <= 0) return;
-
-        // 攻撃命令を受け付けたその時だけ弓矢を生成
-        if(this.in_action_frame.attack == COOL_TIME.attack){
-            let arrow = new Arrow(this.x, this.y, this.direction, this.img.arrow);
-            this.arrows.push(arrow);
-        }
-
-        // 攻撃フレームを 1 進める
-        this.in_action_frame.attack--;
-    }
-
-    // 被ダメージ処理
-    // ダメージを受けたらプレイヤーキャラを点滅させる
-    // action メソッドから呼び出される
-    damaged(){
-        // 無敵時間が終了したら、無敵時間経過は行わない
-        if(this.in_action_frame.damaged <= 0) return;
-
-        // 被ダメージフレームを 1 進める
-        this.in_action_frame.damaged--;
-
-        // in_action_frame.damaged が 2 フレーム進むごとに、色をオレンジと青で交互に変える
-        // 0 フレーム ... 青
-        // 1 ~ 2  フレーム ... オレンジ
-        // 3 ~ 4  フレーム ... 青
-        // 5 ~ 6  フレーム ... オレンジ
-        // 7 ~ 8 フレーム ... 青
-        // ...
-        const CHANGE_COLOR_FRAME = 2;   // 何フレームごとに色を変えるか
-        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 0) this.color = COLOR.blue;
-        if(Math.ceil(this.in_action_frame.damaged / CHANGE_COLOR_FRAME) % 2 == 1) this.color = COLOR.orange;
-    }
-
     // 描画処理
     // game.js の メインループから呼び出される
     draw(canvas, context, tile_size_in_canvas){
-        // 弓矢の描画
-        for(let arrow of this.arrows){
-            arrow.draw(canvas, context, tile_size_in_canvas);
-        }
-
-        // プレイヤー自身の描画
-        let player_img;
-        // 色の確定
-        if(this.color == COLOR.blue) player_img = this.img.blue;
-        if(this.color == COLOR.orange) player_img = this.img.orange;
-
-        if(this.direction == 0) player_img = player_img.back[this.animation_frame];
-        if(this.direction == 1) player_img = player_img.front[this.animation_frame];
-        if(this.direction == 2) player_img = player_img.left[this.animation_frame];
-        if(this.direction == 3) player_img = player_img.right[this.animation_frame];
-
-        context.drawImage(
-            player_img, // img
-            this.x * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dx (canvas の描画開始位置 x)
-            this.y * tile_size_in_canvas - tile_size_in_canvas * 0.5,  // dy (canvas の描画開始位置 y)
-            tile_size_in_canvas,  // d_width (canvas の描画サイズ 横幅)
-            tile_size_in_canvas,  // d_height (canvas の描画サイズ 縦幅)
-        );
-
-        // HPバーの描画
-        const HP_BAR_WIDTH_COEFFICIENT = 0.25;              // HPバーの幅に係る係数
-        const HP_BAR_HEIGHT_COEFFICIENT = 0.015;            // HPバーの高さに係る係数
-        const HP_BAR_OUTSIDE_WIDTH_COEFFICIENT = 1;         // HPバーの外側の白い部分の横のサイズ比
-        const HP_BAR_OUTSIDE_HEIGHT_COEFFICIENT = 1;        // HPバーの外側の白い部分の縦のサイズ比
-        const HP_BAR_INSIDE_WIDTH_COEFFICIENT = 0.96;       // HPバーの内側の赤い部分の横のサイズ比
-        const HP_BAR_INSIDE_HEIGHT_COEFFICIENT = 0.4;       // HPバーの内側の赤い部分の縦のサイズ比
-
-        const HP_BAR_X = 0.14;  // canvas の横幅を 1 としたときの HPバーの横の中心 x座標
-        const HP_BAR_Y = 0.02;  // canvas の縦幅を 1 としたときの HPバーの横の中心 y座標
-        const OUTSIDE_WIDTH = canvas.width * HP_BAR_WIDTH_COEFFICIENT * HP_BAR_OUTSIDE_WIDTH_COEFFICIENT;       // HPバーの外側横幅
-        const OUTSIDE_HEIGHT = canvas.height * HP_BAR_HEIGHT_COEFFICIENT * HP_BAR_OUTSIDE_HEIGHT_COEFFICIENT;   // HPバーの外側縦幅
-        const INSIDE_WIDTH = canvas.width * HP_BAR_WIDTH_COEFFICIENT * HP_BAR_INSIDE_WIDTH_COEFFICIENT;         // HPバーの内側の横幅
-        const INSIDE_HEIGHT = canvas.height * HP_BAR_HEIGHT_COEFFICIENT * HP_BAR_INSIDE_HEIGHT_COEFFICIENT;     // HPバーの内側の縦幅
-
-        // 外側の白い部分
-        context.fillStyle = "rgb(255, 255, 255)";
-        context.fillRect(
-            canvas.width * HP_BAR_X - OUTSIDE_WIDTH * 0.5,
-            canvas.height * HP_BAR_Y - OUTSIDE_HEIGHT * 0.5,
-            OUTSIDE_WIDTH,
-            OUTSIDE_HEIGHT,
-        );
-
-        // HPバーの内側の赤色の部分
-        context.fillStyle = "rgb(215, 0, 0)";
-        context.fillRect(
-            canvas.width * HP_BAR_X - INSIDE_WIDTH * 0.5,
-            canvas.height * HP_BAR_Y - INSIDE_HEIGHT * 0.5,
-            INSIDE_WIDTH,
-            INSIDE_HEIGHT,
-        );
-
-        // HPバーの内側の緑色の部分
-        context.fillStyle = "rgb(0, 185, 0)";
-        context.fillRect(
-            canvas.width * HP_BAR_X - INSIDE_WIDTH * 0.5,
-            canvas.height * HP_BAR_Y - INSIDE_HEIGHT * 0.5,
-            INSIDE_WIDTH * (this.status.hp / this.max_hp),
-            INSIDE_HEIGHT,
-        );
-    }
-
-    // ダメージを受ける処理。
-    // NOTE: ダメージ発生時に敵クラスから呼び出す
-    is_damaged(damage, frame){
-        // もし、無敵時間中なら、ダメージは発生しない
-        if(this.in_action_frame.damaged > 0) return;
-
-        // HP を ダメージ数分減らす
-        this.status.hp -= damage;
-
-        // 死亡判定
-        // ダメージを受けた結果、HP が 0 になったら、ゲームオーバー処理
-        if(this.status.hp <= 0){
-            this.status.hp = 0;                    // HP が マイナスの値にならないように、0に調整。
-            console.log("ゲームオーバー");
-        }
-
-        // 無敵時間を付与
-        this.in_action_frame.damaged = frame;
-    }
-
-    // 足跡の追加処理
-    // move メソッドから呼ばれる
-    add_foot_print(){
-        let player_x = this.x - OFFSET; // プレイヤーの x 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-        let player_y = this.y - OFFSET; // プレイヤーの y 座標を配列のインデックスになるように調整。一番左上のタイルの真上に経っていた場合、0
-        
-        // 足跡を追加
-        this.foot_print.push(
-            {
-                x: player_x,
-                y: player_y,
-            }
-        );
-
-        // 足跡が100個を超えたら、古いものから削除していく
-        if(this.foot_print.length > 100) this.foot_print.delete(this.foot_print[0]);
-    }
-
-    // マップ移動処理
-    // move メソッドから呼ばれる
-    check_map_change(img, enemies){
-        if(this.x < 0){
-            this.x += FIELD_SIZE_IN_SCREEN;
-            this.world_map_x--;
-            this.execute_common_process_by_map_change(img, enemies);
-        }
-        if(this.x > FIELD_SIZE_IN_SCREEN){
-            this.x -= FIELD_SIZE_IN_SCREEN;
-            this.world_map_x++;
-            this.execute_common_process_by_map_change(img, enemies);
-        }
-        if(this.y < 0){
-            this.y += FIELD_SIZE_IN_SCREEN;
-            if(change_map_from_map_x0_y1_to_map_x0_y0(this.world_map_x, this.world_map_y, this.foot_print) == false) return; // マップ[0][1] から ラスボスの城のあるマップ[0][0]に行くときの謎要素の追加
-            this.world_map_y--;
-            this.execute_common_process_by_map_change(img, enemies);
-        }
-        if(this.y > FIELD_SIZE_IN_SCREEN){
-            this.y -= FIELD_SIZE_IN_SCREEN;
-            this.world_map_y++;
-            this.execute_common_process_by_map_change(img, enemies);
-        }
-    }
-
-    // 階段でのマップ移動処理
-    // move メソッドから呼ばれる
-    // 昇り階段の座標とプレイヤーキャラの
-    // ワールドマップ上の座標と、マップ上の座標が一致したら、下り階段の座標にワープする
-    // 下り階段の座標とプレイヤーキャラの
-    // ワールドマップ上の座標と、マップ上の座標が一致したら、昇り階段の座標にワープする
-    check_map_change_by_stairs(img, enemies){
-        for(let change_map_by_stair of change_map_by_stairs_list()){
-            // 昇り階段から下り階段へのワープ
-            if(
-                this.x == change_map_by_stair.ascending.x + OFFSET &&
-                this.y == change_map_by_stair.ascending.y + OFFSET &&
-                this.world_map_x == change_map_by_stair.ascending.world_map_x &&
-                this.world_map_y == change_map_by_stair.ascending.world_map_y
-            ){
-                this.x = change_map_by_stair.descending.x + OFFSET;
-                this.y = change_map_by_stair.descending.y + OFFSET;
-                this.world_map_x = change_map_by_stair.descending.world_map_x;
-                this.world_map_y = change_map_by_stair.descending.world_map_y;
-                this.execute_common_process_by_map_change(img, enemies);
-            }
-            // 下り階段から昇り階段へのワープ
-            else if(
-                this.x == change_map_by_stair.descending.x + OFFSET &&
-                this.y == change_map_by_stair.descending.y + OFFSET &&
-                this.world_map_x == change_map_by_stair.descending.world_map_x &&
-                this.world_map_y == change_map_by_stair.descending.world_map_y
-            ){
-                this.x = change_map_by_stair.ascending.x + OFFSET;
-                this.y = change_map_by_stair.ascending.y + OFFSET;
-                this.world_map_x = change_map_by_stair.ascending.world_map_x;
-                this.world_map_y = change_map_by_stair.ascending.world_map_y;
-                this.execute_common_process_by_map_change(img, enemies);
-            }
-        }
-    }
-
-    // マップ移動の際に行われる共通処理
-    // - 弓矢の消去
-    // - 移動前のマップの敵の全消去
-    // - 移動先のマップの敵の生成
-    execute_common_process_by_map_change(img, enemies){
-        this.arrows.delete_all(); // 弓矢を全て消す
-        this.foot_print.delete_all(); // 足跡を全て消す 
-        enemies.delete_all(); // 現在のマップにいる敵を全て消す
-        generate_enemies(this.world_map_x, this.world_map_y, img, enemies); // 移動先のマップに生息している敵キャラを生み出す
+        this.draw_arrows(canvas, context, tile_size_in_canvas);
+        this.draw_myself(canvas, context, tile_size_in_canvas);
+        this.draw_hp_bar(canvas, context, tile_size_in_canvas);
     }
 }
+
+// NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
+
+// 02_action
+include(Player, move);
+include(Player, execute_common_process_by_map_change);
+include(Player, add_foot_print);
+include(Player, check_map_change);
+include(Player, check_map_change_by_stairs);
+
+include(Player, attack);
+include(Player, damaged);
+
+// 03_draw
+include(Player, draw_arrows);
+include(Player, draw_myself);
+include(Player, draw_hp_bar);
+
+// その他
+include(Player, is_damaged);
