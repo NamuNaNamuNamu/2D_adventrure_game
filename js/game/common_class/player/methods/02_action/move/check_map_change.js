@@ -1,7 +1,7 @@
 // マップ移動処理
 // move メソッドから呼ばれる
 
-import { change_map_from_map_x0_y1_to_map_x0_y0 } from "../../../../../common_function/change_map_from_map_x0_y1_to_map_x0_y0.js";
+import { change_map_from_map_x0_y1_to_map_x0_y0 } from "./check_map_change/change_map_from_map_x0_y1_to_map_x0_y0.js";
 
 export function check_map_change(img, enemies){
     if(this.x < 0){

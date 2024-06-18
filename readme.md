@@ -32,7 +32,6 @@
             - world_map_parts                           <!-- マップのパーツ(16 × 16 サイズ = 1画面分) -->
             * calculate_target_direction.js             <!-- 目標の方向を算出する -->
             * change_map_by_stairs_list                 <!-- 階段によるマップ移動を定義した関数 -->
-            * change_map_from_map_x0_y1_to_map_x0_y0.js <!-- マップ[0][1] からラスボスの城のある マップ[0][0] に行くときの謎解き要素の追加 -->
             * change_screen_to.js                       <!-- メインループを止めて、次の画面に遷移する関数 -->
             * draw_map.js                               <!-- マップのパーツのデータに従って、キャンパスに描画する関数 -->
             * enemy_species.js                          <!-- 敵の種類一覧 -->
