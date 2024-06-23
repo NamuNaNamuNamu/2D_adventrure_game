@@ -150,7 +150,7 @@ export class Slime{
     // 敵キャラを行動させる
     // game.js の メインループから呼び出される
     action(player, enemies, tile_size_in_canvas){
-        this.move();
+        this.move(ANIMATION_ORDER);
         this.attack(player, tile_size_in_canvas);
         this.damaged(player, enemies, tile_size_in_canvas, MAP_CHIP_WHICH_CANNOT_MOVE_ON);
     }

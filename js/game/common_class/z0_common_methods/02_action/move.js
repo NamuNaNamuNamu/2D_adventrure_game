@@ -4,7 +4,7 @@
 //     2-1. is_taking_a_break が true の場合、動かない
 //     2-2. is_taking_a_break が false の場合、direction の方向 (0: 上, 1: 下, 2: 左, 3: 右) に動く
 
-export function move(){
+export function move(animation_order){
     // アクションが終了したら、動作は行わない (次の動作命令に向けて待機)
     if(this.in_action_frame.move <= 0) return;
 
@@ -25,7 +25,7 @@ export function move(){
     this.y = Math.round(this.y * 2) * 0.5;
 
     // アニメーションを動かす
-    const NUM_OF_ANIMATION_FLAME = 4;      // アニメーションの数 (4 フレーム 1 セットでアニメーションする)
+    const NUM_OF_ANIMATION_FLAME = animation_order.length;      // アニメーションの数
     this.animation_frame = (this.animation_frame + 1) % NUM_OF_ANIMATION_FLAME; // アニメーションを 1 動かす
 
     // 休み状態を解消

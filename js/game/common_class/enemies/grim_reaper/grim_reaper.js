@@ -12,7 +12,7 @@ import { attack } from "../../z0_common_methods/02_action/attack.js";
 import { attack_by_magic_bullet } from "./methods/02_action/attack_by_magic_bullet.js";
 import { damaged } from "../../z0_common_methods/02_action/damaged.js";
 import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged.js";
-import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js"
+import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js";
 
 // 03_draw
 import { draw_small_enemy } from "../../z0_common_methods/03_draw/draw_small_enemy.js";
@@ -147,7 +147,7 @@ export class GrimReaper{
     // game.js の メインループから呼び出される
     action(player, enemies, tile_size_in_canvas){
         // 移動系
-        this.move();
+        this.move(ANIMATION_ORDER);
         this.move_magic_bullet();
 
         // 攻撃系
