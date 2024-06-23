@@ -1,11 +1,14 @@
 /* main 関数 */
 // 一番最初に呼ばれる関数
 
-import * as game from "./game/start.js";
+import { start } from "./game/screens/01_start.js";
 import { Key } from "./global_class/key.js";
 import { canvas_initialize } from "./global_function/canvas_initialize.js";
 
 export function main(){
+    // 画像の用意 // NOTE: 先に画像を用意しておかないと読み込みに時間がかかる
+    let img = prepare_images();
+
     // canvas の用意
     let canvas = document.getElementById("main_canvas");    
     let context = canvas.getContext("2d");
@@ -15,9 +18,6 @@ export function main(){
     canvas_initialize(canvas, context);
     // 画面の大きさが変更されたときに canvas サイズをリサイズするようにする
     start_automatic_screen_size_correction(canvas, context);
-
-    // 画像の用意 // NOTE: 先に画像を用意しておかないと読み込みに時間がかかる
-    let img = prepare_images();
 
     // 入力情報をまとめてもっておく key オブジェクトを用意
     let key = new Key();
@@ -33,42 +33,8 @@ export function main(){
     }
     // 最後の画像 (yuusha_right2) の読み込みが完了したら、スタート画面の描画を開始する
     global_info.img.yuusha_right2.addEventListener("load", function(){
-        game.start(global_info);
+        start(global_info);
     }, false);
-
-    function determine_canvas_size(canvas){
-        /*
-        canvas のサイズを、ブラウザの画面に合わせて、
-        出来るだけ大きい正方形に整形する
-        */
-
-        let one_side = 0; // 画面の1辺のサイズ
-
-        // 画面めいっぱいになるような canvas の 1辺のサイズを決める
-        if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-            one_side = document.documentElement.clientHeight * CANVAS_SIZE_RATIO;
-            one_side = one_side - one_side % 16;
-        }
-        else{
-            one_side = document.documentElement.clientWidth * CANVAS_SIZE_RATIO;
-            one_side = one_side - one_side % 16;
-        }
-
-        canvas.width = one_side;
-        canvas.height = one_side;
-    }
-
-    function start_automatic_screen_size_correction(canvas, context){
-        /*
-        ブラウザサイズを変更したときに、それに合わせて、
-        canvas のサイズを変更するイベントリスナーを起動する
-        */
-
-        window.addEventListener("resize", function(){
-            determine_canvas_size(canvas);
-            canvas_initialize(canvas, context);
-        }, false);
-    }
 
     function prepare_images(){
         // マップチップの写真のパス
@@ -161,6 +127,40 @@ export function main(){
             img.src = img_path;
             return img;
         }
+    }
+
+    function determine_canvas_size(canvas){
+        /*
+        canvas のサイズを、ブラウザの画面に合わせて、
+        出来るだけ大きい正方形に整形する
+        */
+
+        let one_side = 0; // 画面の1辺のサイズ
+
+        // 画面めいっぱいになるような canvas の 1辺のサイズを決める
+        if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+            one_side = document.documentElement.clientHeight * CANVAS_SIZE_RATIO;
+            one_side = one_side - one_side % 16;
+        }
+        else{
+            one_side = document.documentElement.clientWidth * CANVAS_SIZE_RATIO;
+            one_side = one_side - one_side % 16;
+        }
+
+        canvas.width = one_side;
+        canvas.height = one_side;
+    }
+
+    function start_automatic_screen_size_correction(canvas, context){
+        /*
+        ブラウザサイズを変更したときに、それに合わせて、
+        canvas のサイズを変更するイベントリスナーを起動する
+        */
+
+        window.addEventListener("resize", function(){
+            determine_canvas_size(canvas);
+            canvas_initialize(canvas, context);
+        }, false);
     }
 
     function start_receiving_input(key){

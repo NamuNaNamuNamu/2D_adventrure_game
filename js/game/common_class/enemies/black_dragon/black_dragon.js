@@ -1,8 +1,21 @@
 /* ブラックドラゴンクラス */
 
-import { Fire } from "../enemy_weapon/fire.js";
-import { Enemy } from "./../enemy.js";
-import { calculate_target_direction } from "../../common_function/calculate_target_direction.js";
+// TODO: 未仕分け
+import { Fire } from "./weapon/fire.js";
+import { calculate_target_direction } from "../../../common_function/calculate_target_direction.js";
+
+// 01_control
+
+// 02_action
+import { damaged } from "./methods/02_action/damaged.js";
+import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged.js";
+
+// 03_draw
+
+// その他
+import { is_overlapping_with } from "../../z0_common_methods/is_overlapping_with.js";
+import { include } from "../../../../global_function/include.js";
+import { ExpandedArray } from "../../../../global_class/expanded_array.js";
 
 const HIT_BOX = {   // ブラックドラゴンの当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.35,    // 横幅
@@ -19,38 +32,34 @@ const COLOR = {
 const FIRE_ATK_COEFFICIENT = 0.5;   // 直接、身体が触れる攻撃を 1 としたときの、炎の攻撃倍率。atk に 掛け算する。
 const SPEED_COEFFICIENT = 0.083;        // ブラックドラゴンのスピードの係数
 const ANIMATION_ORDER = [0, 1];         // アニメーションの流れ
-const MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON = [ // ブラックドラゴンが移動できない床
-    2,  // 木付き草原
-    3,  // 岩付き草原
-    7,  // 木付き深い草原
-    8,  // 岩付き深い草原
-    12, // 木付き砂原
-    13, // 岩付き砂原
-    15, // テーブル
-    18, // 木付き深い砂原
-    19, // 岩付き深い砂原
-    23, // 扉付き青床
-    26, // 扉付き紫床
-    28, // 石レンガ (灰色)
-    29, // 石レンガ壁 (灰色)
-    30, // 石レンガ (青色)
-    31, // 石レンガ壁 (青色)
-    33, // 木付き青床
-    34, // 岩つき青床
-    37, // 木付き紫床
-    38, // 岩付き紫床
-    40, // 海
-    41, // 深い海
-];
 
-export class BlackDragon extends Enemy{
+export class BlackDragon {
     constructor(x, y, world_map_x, world_map_y, img, status){
-        super(x, y, world_map_x, world_map_y, HIT_BOX.width, HIT_BOX.height, img, MAP_CHIP_WHICH_SLIME_CANNOT_MOVE_ON, SPEED_COEFFICIENT, ANIMATION_ORDER, status);
-        this.max_hp = status.hp;    // 最大HP
-        this.fires = [];    // 放った炎
+        this.x = x;                                                            // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 敵キャラの画像の中心の座標とする
+        this.y = y;                                                            // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 敵キャラの画像の中心の座標とする
+        this.world_map_x = world_map_x;                                        // その敵キャラが生息する ワールドマップの x 座標
+        this.world_map_y = world_map_y;                                        // その敵キャラが生息する ワールドマップの y 座標
+        this.width = HIT_BOX.width;                                                     // 敵キャラの当たり判定の横幅 (タイル基準。すなわち 1 ならタイル1枚分)
+        this.height = HIT_BOX.height;                                                   // 敵キャラの当たり判定の縦幅 (タイル基準。すなわち 1 ならタイル1枚分)
+        this.img = img;                                                                 // 写真 (original: 通常時, damaged: 被ダメージ時)
+        this.speed_coefficient = SPEED_COEFFICIENT;                                     // 移動スピード係数
+        this.direction = 0;                                                             // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
+        this.color = COLOR.original;                                                    // 色(通常時: COLOR.original, 被ダメージ時: COLOR.damaged)
+        this.animation_frame = 0;                                                       // 写真のアニメーション (0 と 1 と 2 と 3 を 交互に変えてアニメーションを実現する)
+        this.animation_order = ANIMATION_ORDER;                                         // アニメーションの流れ
+        this.in_action_frame = {
+            move: 0,                                                                    // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
+            attack: 0,                                                                  // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
+            damaged: 0,                                                                 // 被ダメージフレーム数。一回ダメージを受けたら、このフレーム分は無敵。
+        };
+        this.is_taking_a_break = false;                                                 // 行動しない状態かどうか
+        this.status = status;                                                           // 敵キャラのステータス (hp, 攻撃力(atk))
+
+        this.max_hp = status.hp; // 最大HP
+        this.fires = new ExpandedArray(); // 放った炎
     }
 
-    control(player){
+    control(_player){
         // 行動中であれば、受け付けない
         if(this.in_action_frame.move > 0) return;
 
@@ -60,6 +69,15 @@ export class BlackDragon extends Enemy{
         // 左に歩いたら右に。右に歩いたら今度は左に動く
         // 2: 左, 3: 右
         this.direction == 2 ? this.direction = 3 : this.direction = 2;
+    }
+
+    action(player, enemies, tile_size_in_canvas){
+        this.move();
+        this.attack(player, tile_size_in_canvas);
+
+        // 被ダメージ系
+        this.protected(player, tile_size_in_canvas);
+        this.damaged(player, enemies, tile_size_in_canvas);
     }
 
     move(){
@@ -132,10 +150,9 @@ export class BlackDragon extends Enemy{
         this.in_action_frame.attack--;
     }
 
-    // ダメージ判定
-    // プレイヤーキャラの弓矢が重なったらダメージを受けて、当たった弓矢を消去
+    // 弱点以外のところに当たった弓矢を消去
     // action メソッドから呼び出される
-    damaged(player, enemies, tile_size_in_canvas){
+    protected(player, tile_size_in_canvas){
         // 自分の弓矢が弱点じゃない部分に当たったら
         for(let arrow of player.arrows){
             if(
@@ -151,11 +168,9 @@ export class BlackDragon extends Enemy{
                 this.y * tile_size_in_canvas + this.height * tile_size_in_canvas * 2.5 >= arrow.y * tile_size_in_canvas - arrow.height * tile_size_in_canvas * 0.5
             ){
                 // 当たった弓矢を消去するだけ
-                player.arrows.splice(player.arrows.indexOf(arrow), 1);
+                player.arrows.delete(arrow);
             }
         }
-
-        super.damaged(player, enemies, tile_size_in_canvas)
     }
 
     draw(canvas, context, tile_size_in_canvas){
@@ -259,9 +274,18 @@ export class BlackDragon extends Enemy{
             INSIDE_HEIGHT,
         );
     }
-
-    // ブラックドラゴンは吹き飛ばされない
-    is_blown_away(arrow){
-        // 何もしない
-    }
 }
+
+// NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
+
+// 01_control
+
+
+// 02_action
+include(BlackDragon, damaged);
+include(BlackDragon, is_damaged);
+
+// 03_draw
+
+// その他
+include(BlackDragon, is_overlapping_with);
