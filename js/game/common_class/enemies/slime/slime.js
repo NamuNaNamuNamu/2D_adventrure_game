@@ -68,7 +68,6 @@ export class Slime{
         this.direction = 0;                                                             // 身体の向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.color = COLOR.original;                                                    // 色(通常時: COLOR.original, 被ダメージ時: COLOR.damaged)
         this.animation_frame = 0;                                                       // 写真のアニメーション (0 と 1 と 2 と 3 を 交互に変えてアニメーションを実現する)
-        this.animation_order = ANIMATION_ORDER;                                         // アニメーションの流れ
         this.in_action_frame = {
             move: 0,                                                                    // 移動フレーム数。一回動いたら、このフレーム分は移動操作出来ない (前の動作の継続)
             attack: 0,                                                                  // 攻撃フレーム数。一回攻撃したら、このフレーム分は攻撃操作出来ない
@@ -158,7 +157,7 @@ export class Slime{
     // 描画処理
     // game.js の メインループから呼び出される
     draw(_canvas, context, tile_size_in_canvas){
-        this.draw_small_enemy(_canvas, context, tile_size_in_canvas);
+        this.draw_small_enemy(_canvas, context, tile_size_in_canvas, ANIMATION_ORDER);
     }
 }
 

@@ -5,7 +5,7 @@ const COLOR = {
     damaged: 1,     // 被ダメージ時の色
 }
 
-export function draw_small_enemy(_canvas, context, tile_size_in_canvas){
+export function draw_small_enemy(_canvas, context, tile_size_in_canvas, animation_order){
     const TOP_LEFT_CORNER_AXIS = {          // マップチップ本体の左上端
         x: 0,
         y: 0,
@@ -27,7 +27,7 @@ export function draw_small_enemy(_canvas, context, tile_size_in_canvas){
 
     context.drawImage(
         enemy_img, // img
-        TOP_LEFT_CORNER_AXIS.x + MARGIN_LEFT + this.animation_order[this.animation_frame] * TILE.width,  // sx (元画像の切り抜き始点 x)
+        TOP_LEFT_CORNER_AXIS.x + MARGIN_LEFT + animation_order[this.animation_frame] * TILE.width,  // sx (元画像の切り抜き始点 x)
         TOP_LEFT_CORNER_AXIS.y + MARGIN_TOP + DIRECTION_ORDER[this.direction] * TILE.height,  // sy (元画像の切り抜き始点 y)
         TILE.width - (MARGIN_LEFT + MARGIN_RIGHT),  // s_width (元画像の切り抜きサイズ 横幅)
         TILE.height - (MARGIN_TOP + MARGIN_BOTTOM),  // s_height (元画像の切り抜きサイズ 縦幅)
