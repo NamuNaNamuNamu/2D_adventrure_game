@@ -19,6 +19,7 @@ import { draw_hp_bar } from "./methods/03_draw/draw_hp_bar.js";
 import { draw_myself } from "./methods/03_draw/draw_myself.js";
 
 // その他
+import { is_overlapping_with } from "../z0_common_methods/is_overlapping_with.js";
 import { include } from "../../../global_function/include.js";
 import { ExpandedArray } from "../../../global_class/expanded_array.js";
 import { is_damaged } from "./methods/is_damaged.js";
@@ -166,3 +167,4 @@ include(Player, draw_hp_bar);
 
 // その他
 include(Player, is_damaged);
+include(Player, is_overlapping_with);

@@ -1,4 +1,8 @@
 /* 主人公の武器である弓矢クラス */
+
+import { is_overlapping_with } from "../../z0_common_methods/is_overlapping_with.js";
+import { include } from "../../../../global_function/include.js";
+
 const ARROW_SPEED_COEFFICIENT = 0.75;    // 弓矢のスピードの係数
 
 export class Arrow{
@@ -53,3 +57,8 @@ export class Arrow{
         );
     }
 }
+
+// NOTE: クラス定義の下に配置しないと、Uncaught ReferenceError: Cannot access '***' before initialization のエラーが発生する。
+
+// その他
+include(Arrow, is_overlapping_with);
