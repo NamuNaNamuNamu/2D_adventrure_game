@@ -15,6 +15,7 @@ import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged
 import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js";
 
 // 03_draw
+import { draw_magic_bullet } from "./methods/03_draw/draw_magic_bullet.js";
 import { draw_small_enemy } from "../../z0_common_methods/03_draw/draw_small_enemy.js";
 
 // その他
@@ -159,13 +160,9 @@ export class GrimReaper{
 
     // 描画処理
     // game.js の メインループから呼び出される
-    draw(_canvas, context, tile_size_in_canvas){
-        // 魔法弾の描画
-        for(let magic_bullet of this.magic_bullets){
-            magic_bullet.draw(_canvas, context, tile_size_in_canvas);
-        }
-
-        this.draw_small_enemy(_canvas, context, tile_size_in_canvas, ANIMATION_ORDER);
+    draw(canvas, context, tile_size_in_canvas){
+        this.draw_magic_bullet(canvas, context, tile_size_in_canvas);
+        this.draw_small_enemy(canvas, context, tile_size_in_canvas, ANIMATION_ORDER);
     }
 }
 
@@ -184,6 +181,7 @@ include(GrimReaper, is_damaged);
 include(GrimReaper, is_blown_away);
 
 // 03_draw
+include(GrimReaper, draw_magic_bullet);
 include(GrimReaper, draw_small_enemy);
 
 // その他
