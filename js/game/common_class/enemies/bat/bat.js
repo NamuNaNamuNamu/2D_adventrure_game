@@ -23,13 +23,13 @@ const HIT_BOX = {   // こうもりの当たり判定 (タイル基準。すな�
     height: 0.35,   // 縦幅
 }
 const COOL_TIME = { // それぞれの行動のクールタイム
-    move: 5,        // 移動クールタイム（1 歩で 8 フレーム費やす）
+    move: 5,        // 移動クールタイム（1 歩で 5 フレーム費やす）
 }
 const COLOR = {
     original: 0,    // 通常時の色 
     damaged: 1,     // 被ダメージ時の色
 }
-const SPEED_COEFFICIENT = 0.2;        // スライムのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
+const SPEED_COEFFICIENT = 0.2;        // こうもりのスピードの係数 (≒ 1 ÷ COOL_TIME.move)
 const ANIMATION_ORDER = [0, 1, 2, 1];  // アニメーションの流れ
 const MAP_CHIP_WHICH_CANNOT_MOVE_ON = [ // こうもりが移動できない床
     2,  // 木付き草原
