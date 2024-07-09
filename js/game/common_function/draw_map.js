@@ -13,7 +13,7 @@ export function draw_map(map_data, canvas, context, map_chip_img){
         width: 32,  // マップチップ画像上でのマップチップ 1つ分の幅
         height: 32, // マップチップ画像上でのマップチップ 1つ分の幅
     };
-    const TILE_SIZE_IN_CANVAS = canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でののサイズ
+    const TILE_SIZE_IN_CANVAS = canvas.width / FIELD_SIZE_IN_SCREEN; // 1 タイルの canvas 上でのサイズ
 
     for(let row = 0; row < FIELD_SIZE_IN_SCREEN; row++){
         for(let column = 0; column < FIELD_SIZE_IN_SCREEN; column++){

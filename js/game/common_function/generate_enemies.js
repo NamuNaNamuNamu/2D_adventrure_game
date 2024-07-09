@@ -3,9 +3,9 @@
 import { enemy_species } from "./enemy_species.js";
 import { world_map } from "./world_map.js";
 
-import { Slime } from "../common_class/enemies/slime.js";
-import { GrimReaper } from "../common_class/enemies/grim_reaper.js";
-import { BlackDragon } from "../common_class/enemies/black_dragon.js";
+import { Slime } from "../common_class/enemies/slime/slime.js";
+import { GrimReaper } from "../common_class/enemies/grim_reaper/grim_reaper.js";
+import { BlackDragon } from "../common_class/enemies/black_dragon/black_dragon.js";
 
 export function generate_enemies(world_map_x, world_map_y, img, enemies){
     // プレイヤーが移動した先のマップに生息している敵キャラを追加
