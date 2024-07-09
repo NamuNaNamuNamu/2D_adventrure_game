@@ -5,6 +5,7 @@ import { world_map } from "./world_map.js";
 
 import { Slime } from "../common_class/enemies/slime/slime.js";
 import { GrimReaper } from "../common_class/enemies/grim_reaper/grim_reaper.js";
+import { Bat } from "../common_class/enemies/bat/bat.js";
 import { BlackDragon } from "../common_class/enemies/black_dragon/black_dragon.js";
 
 export function generate_enemies(world_map_x, world_map_y, img, enemies){
@@ -35,6 +36,19 @@ export function generate_enemies(world_map_x, world_map_y, img, enemies){
                 atk: enemy_species().grim_reaper.attack,
             };
             enemies.push(new GrimReaper(enemy.x, enemy.y, world_map_x, world_map_y, grim_reaper_img, status));
+        }
+
+        // こうもり
+        if(enemy.species_id == enemy_species().bat.id){
+            let bat_img = {
+                original: img.bat,
+                damaged: img.bat_damaged,
+            };
+            let status = {
+                hp: enemy_species().bat.hp,
+                atk: enemy_species().bat.attack,
+            };
+            enemies.push(new Bat(enemy.x, enemy.y, world_map_x, world_map_y, bat_img, status));
         }
 
         // ブラックドラゴン
