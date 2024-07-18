@@ -1,24 +1,22 @@
 // 敵キャラの移動処理
 // 1. MOVE_COOL_TIME ごとに、アニメーションを動かす
-// 2. MOVE_COOL_TIME ごとに、以下の挙動をする。
-//     2-1. is_taking_a_break が true の場合、動かない
-//     2-2. is_taking_a_break が false の場合、direction の方向 (0: 上, 1: 下, 2: 左, 3: 右) に動く
+// 2. MOVE_COOL_TIME ごとに、direction の方向 (0: 上, 1: 下, 2: 左, 3: 右) に動く
 
 export function move(animation_order){
     // アクションが終了したら、動作は行わない (次の動作命令に向けて待機)
     if(this.in_action_frame.move <= 0) return;
 
-    // 休憩じゃなければ移動する
+    // 移動する
     const DIRECTION = {
         up: 0,
         down: 1,
         left: 2,
         right: 3
     };
-    if(this.direction == DIRECTION.up    && !this.is_taking_a_break) this.y = Math.round((this.y - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == DIRECTION.down  && !this.is_taking_a_break) this.y = Math.round((this.y + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == DIRECTION.left  && !this.is_taking_a_break) this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == DIRECTION.right && !this.is_taking_a_break) this.x = Math.round((this.x + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.up)    this.y = Math.round((this.y - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.down)  this.y = Math.round((this.y + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.left)  this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.right) this.x = Math.round((this.x + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
     
     // 動作フレームを 1 進める
     this.in_action_frame.move--;
@@ -33,7 +31,4 @@ export function move(animation_order){
     // アニメーションを動かす
     const NUM_OF_ANIMATION_FLAME = animation_order.length;      // アニメーションの数
     this.animation_frame = (this.animation_frame + 1) % NUM_OF_ANIMATION_FLAME; // アニメーションを 1 動かす
-
-    // 休み状態を解消
-    this.is_taking_a_break = false;
 }

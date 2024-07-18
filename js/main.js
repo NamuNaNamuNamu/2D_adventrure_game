@@ -60,6 +60,8 @@ export function main(){
         const SLIME_DAMAGED_IMG_PATH = "../img/enemies/slime_damaged.png";
         const GRIM_REAPER_IMG_PATH = "../img/enemies/grim_reaper.png";
         const GRIM_REAPER_DAMAGED_IMG_PATH = "../img/enemies/grim_reaper_damaged.png";
+        const BAT_IMG_PATH = "../img/enemies/bat.png";
+        const BAT_DAMAGED_IMG_PATH = "../img/enemies/bat_damaged.png";
         const BLACK_DRAGON1_IMG_PATH = "../img/enemies/black_dragon1.png";
         const BLACK_DRAGON2_IMG_PATH = "../img/enemies/black_dragon2.png";
         const BLACK_DRAGON_DAMAGED1_IMG_PATH = "../img/enemies/black_dragon_damaged1.png";
@@ -100,6 +102,8 @@ export function main(){
             slime_damaged: generate_img_object(SLIME_DAMAGED_IMG_PATH),
             grim_reaper: generate_img_object(GRIM_REAPER_IMG_PATH),
             grim_reaper_damaged: generate_img_object(GRIM_REAPER_DAMAGED_IMG_PATH),
+            bat: generate_img_object(BAT_IMG_PATH),
+            bat_damaged: generate_img_object(BAT_DAMAGED_IMG_PATH),
             black_dragon1: generate_img_object(BLACK_DRAGON1_IMG_PATH),
             black_dragon2: generate_img_object(BLACK_DRAGON2_IMG_PATH),
             black_dragon_damaged1: generate_img_object(BLACK_DRAGON_DAMAGED1_IMG_PATH),

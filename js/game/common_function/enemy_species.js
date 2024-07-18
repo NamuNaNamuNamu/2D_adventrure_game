@@ -14,6 +14,12 @@ export function enemy_species(){
             hp: 5,
             attack: 30,
         },
+        bat: {
+            id: 3,
+            name: "こうもり",
+            hp: 1,
+            attack: 15,
+        },
         black_dragon: {
             id: 90,
             name: "ブラックドラゴン",
