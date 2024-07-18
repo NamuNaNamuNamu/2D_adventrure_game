@@ -9,10 +9,16 @@ export function move(animation_order){
     if(this.in_action_frame.move <= 0) return;
 
     // 休憩じゃなければ移動する
-    if(this.direction == 0 && !this.is_taking_a_break) this.y = Math.round((this.y - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == 1 && !this.is_taking_a_break) this.y = Math.round((this.y + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == 2 && !this.is_taking_a_break) this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == 3 && !this.is_taking_a_break) this.x = Math.round((this.x + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    const DIRECTION = {
+        up: 0,
+        down: 1,
+        left: 2,
+        right: 3
+    };
+    if(this.direction == DIRECTION.up    && !this.is_taking_a_break) this.y = Math.round((this.y - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.down  && !this.is_taking_a_break) this.y = Math.round((this.y + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.left  && !this.is_taking_a_break) this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.right && !this.is_taking_a_break) this.x = Math.round((this.x + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
     
     // 動作フレームを 1 進める
     this.in_action_frame.move--;

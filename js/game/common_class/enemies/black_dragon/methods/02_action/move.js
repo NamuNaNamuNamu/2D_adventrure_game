@@ -13,8 +13,12 @@ export function move(){
     if(this.in_action_frame.move <= 0) return;
 
     // 移動する
-    if(this.direction == 2) this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
-    if(this.direction == 3) this.x = Math.round((this.x + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    const DIRECTION = {
+        left: 2,
+        right: 3
+    };
+    if(this.direction == DIRECTION.left)  this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
+    if(this.direction == DIRECTION.right) this.x = Math.round((this.x + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
     
     // 動作フレームを 1 進める
     this.in_action_frame.move--;

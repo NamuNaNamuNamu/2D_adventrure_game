@@ -12,7 +12,7 @@ export function move(animation_order){
         down: 1,
         left: 2,
         right: 3
-    }
+    };
     if(this.direction == DIRECTION.up)    this.y = Math.round((this.y - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
     if(this.direction == DIRECTION.down)  this.y = Math.round((this.y + MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
     if(this.direction == DIRECTION.left)  this.x = Math.round((this.x - MINIMUM_STEP * this.speed_coefficient) * 100) / 100;
