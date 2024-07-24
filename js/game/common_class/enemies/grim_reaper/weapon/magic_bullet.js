@@ -1,7 +1,8 @@
+/* しにがみが使う魔法弾クラス */
+
 import { is_overlapping_with } from "../../../z0_common_methods/is_overlapping_with.js";
 import { include } from "../../../../../global_function/include.js";
 
-/* しにがみが使う魔法弾クラス */
 const MAGIC_BULLET_SPEED_COEFFICIENT = 0.60;    // 魔法弾のスピードの係数
 const HIT_BOX = {   // 当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.5,    // 横幅
