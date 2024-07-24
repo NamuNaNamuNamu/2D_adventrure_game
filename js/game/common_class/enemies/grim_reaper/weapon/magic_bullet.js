@@ -10,10 +10,10 @@ const HIT_BOX = {   // 当たり判定 (タイル基準。すなわち 1 なら�
 
 export class MagicBullet{
     constructor(x, y, direction, img){
-        this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 矢の画像の中心の座標とする
-        this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 矢の画像の中心の座標とする
-        this.width = HIT_BOX.width;    // 魔法弾の当たり判定の横幅
-        this.height = HIT_BOX.height;  // 魔法弾の当たり判定の縦幅
+        this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 魔法弾の画像の中心の座標とする
+        this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 魔法弾の画像の中心の座標とする
+        this.width = HIT_BOX.width;         // 魔法弾の当たり判定の横幅
+        this.height = HIT_BOX.height;       // 魔法弾の当たり判定の縦幅
         this.direction = direction;         // 魔法弾の飛ぶ向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.img = img;                     // 写真
     }
