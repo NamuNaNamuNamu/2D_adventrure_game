@@ -33,9 +33,9 @@ export class MagicBullet{
         const outside_of_the_right_edge  = this.x > FIELD_SIZE_IN_SCREEN + HIT_BOX.width;
         const on_the_outside_of_the_map  = (outside_of_the_top_edge || outside_of_the_bottom_edge || outside_of_the_left_edge || outside_of_the_right_edge);
 
-        if(on_the_outside_of_the_map){
+        if(on_the_outside_of_the_map) {
             magic_bullets.delete(this);
-         }
+        }
     }
 
     // 攻撃処理
