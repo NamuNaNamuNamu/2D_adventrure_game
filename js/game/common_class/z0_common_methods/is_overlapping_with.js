@@ -46,5 +46,5 @@ function make_error_msg(errors){
         stringed_error += errors[i] + ", ";
     }
 
-    return stringed_error + errors[last_index] + " is undefined."
+    return stringed_error + errors[last_index] + " are undefined."
 }
