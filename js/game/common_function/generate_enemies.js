@@ -6,6 +6,7 @@ import { world_map } from "./world_map.js";
 import { Slime } from "../common_class/enemies/slime/slime.js";
 import { GrimReaper } from "../common_class/enemies/grim_reaper/grim_reaper.js";
 import { Bat } from "../common_class/enemies/bat/bat.js";
+import { BlockMonster } from "../common_class/enemies/block_monster/block_monster.js";
 import { BlackDragon } from "../common_class/enemies/black_dragon/black_dragon.js";
 
 export function generate_enemies(world_map_x, world_map_y, img, enemies){
@@ -49,6 +50,35 @@ export function generate_enemies(world_map_x, world_map_y, img, enemies){
                 atk: enemy_species().bat.attack,
             };
             enemies.push(new Bat(enemy.x, enemy.y, world_map_x, world_map_y, bat_img, status));
+        }
+
+        // ブロックモンスター
+        if(enemy.species_id == enemy_species().block_monster.id){
+            let block_monster_img = {
+                original: img.block_monster,
+                damaged: img.block_monster_damaged,
+                rock: [
+                    img.rock,          // 通常の岩
+                    img.rock_broken1,  // 壊れた岩アニメーション1
+                    img.rock_broken2,  // 壊れた岩アニメーション2
+                    img.rock_broken3,  // 壊れた岩アニメーション3
+                ],
+                shadow: [
+                    img.shadow1,
+                    img.shadow2,
+                    img.shadow3,
+                    img.shadow4,
+                    img.shadow5,
+                    img.shadow6,
+                    img.shadow7,
+                    img.shadow8
+                ]
+            };
+            let status = {
+                hp: enemy_species().block_monster.hp,
+                atk: enemy_species().block_monster.attack,
+            };
+            enemies.push(new BlockMonster(enemy.x, enemy.y, world_map_x, world_map_y, block_monster_img, status));
         }
 
         // ブラックドラゴン

@@ -55,6 +55,19 @@ export function main(){
         // 炎攻撃の写真のパス
         const FIRE1_IMG_PATH = "../img/fire1.png";
         const FIRE2_IMG_PATH = "../img/fire2.png";
+        // 岩攻撃の写真のパス
+        const ROCK_IMG_PATH = "../img/enemies/rock.png";
+        const ROCK_BROKEN1_IMG_PATH = "../img/enemies/rock_broken1.png";
+        const ROCK_BROKEN2_IMG_PATH = "../img/enemies/rock_broken2.png";
+        const ROCK_BROKEN3_IMG_PATH = "../img/enemies/rock_broken3.png";
+        const SHADOW1_IMG_PATH = "../img/enemies/shadow1.png";
+        const SHADOW2_IMG_PATH = "../img/enemies/shadow2.png";
+        const SHADOW3_IMG_PATH = "../img/enemies/shadow3.png";
+        const SHADOW4_IMG_PATH = "../img/enemies/shadow4.png";
+        const SHADOW5_IMG_PATH = "../img/enemies/shadow5.png";
+        const SHADOW6_IMG_PATH = "../img/enemies/shadow6.png";
+        const SHADOW7_IMG_PATH = "../img/enemies/shadow7.png";
+        const SHADOW8_IMG_PATH = "../img/enemies/shadow8.png";
         // 敵キャラの写真のパス
         const SLIME_IMG_PATH = "../img/enemies/slime.png";
         const SLIME_DAMAGED_IMG_PATH = "../img/enemies/slime_damaged.png";
@@ -62,6 +75,8 @@ export function main(){
         const GRIM_REAPER_DAMAGED_IMG_PATH = "../img/enemies/grim_reaper_damaged.png";
         const BAT_IMG_PATH = "../img/enemies/bat.png";
         const BAT_DAMAGED_IMG_PATH = "../img/enemies/bat_damaged.png";
+        const BLOCK_MONSTER_IMG_PATH = "../img/enemies/block_monster.png";
+        const BLOCK_MONSTER_DAMAGED_IMG_PATH = "../img/enemies/block_monster_damaged.png";
         const BLACK_DRAGON1_IMG_PATH = "../img/enemies/black_dragon1.png";
         const BLACK_DRAGON2_IMG_PATH = "../img/enemies/black_dragon2.png";
         const BLACK_DRAGON_DAMAGED1_IMG_PATH = "../img/enemies/black_dragon_damaged1.png";
@@ -98,12 +113,26 @@ export function main(){
             magic_bullet: generate_img_object(MAGIC_BULLET_IMG_PATH),
             fire1: generate_img_object(FIRE1_IMG_PATH),
             fire2: generate_img_object(FIRE2_IMG_PATH),
+            rock: generate_img_object(ROCK_IMG_PATH),
+            rock_broken1: generate_img_object(ROCK_BROKEN1_IMG_PATH),
+            rock_broken2: generate_img_object(ROCK_BROKEN2_IMG_PATH),
+            rock_broken3: generate_img_object(ROCK_BROKEN3_IMG_PATH),
+            shadow1: generate_img_object(SHADOW1_IMG_PATH),
+            shadow2: generate_img_object(SHADOW2_IMG_PATH),
+            shadow3: generate_img_object(SHADOW3_IMG_PATH),
+            shadow4: generate_img_object(SHADOW4_IMG_PATH),
+            shadow5: generate_img_object(SHADOW5_IMG_PATH),
+            shadow6: generate_img_object(SHADOW6_IMG_PATH),
+            shadow7: generate_img_object(SHADOW7_IMG_PATH),
+            shadow8: generate_img_object(SHADOW8_IMG_PATH),            
             slime: generate_img_object(SLIME_IMG_PATH),
             slime_damaged: generate_img_object(SLIME_DAMAGED_IMG_PATH),
             grim_reaper: generate_img_object(GRIM_REAPER_IMG_PATH),
             grim_reaper_damaged: generate_img_object(GRIM_REAPER_DAMAGED_IMG_PATH),
             bat: generate_img_object(BAT_IMG_PATH),
             bat_damaged: generate_img_object(BAT_DAMAGED_IMG_PATH),
+            block_monster: generate_img_object(BLOCK_MONSTER_IMG_PATH),
+            block_monster_damaged: generate_img_object(BLOCK_MONSTER_DAMAGED_IMG_PATH),
             black_dragon1: generate_img_object(BLACK_DRAGON1_IMG_PATH),
             black_dragon2: generate_img_object(BLACK_DRAGON2_IMG_PATH),
             black_dragon_damaged1: generate_img_object(BLACK_DRAGON_DAMAGED1_IMG_PATH),
