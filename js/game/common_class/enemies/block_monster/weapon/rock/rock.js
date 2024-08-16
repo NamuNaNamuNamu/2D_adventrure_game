@@ -64,9 +64,17 @@ export class Rock {
         // 影の地点についたあとは、壊れる描写をアニメーションする
         let rock_img;
         if (this.is_broken) {
-            const num_of_broken_rock_img = 3;
-            const index = num_of_broken_rock_img + 1 - Math.ceil(this.in_action_frame.broken * (num_of_broken_rock_img / INITIAL_IN_ACTION_FRAME.broken));
-            rock_img = this.img.rock[index];
+            const get_broken_rock_img = (rock_images) => {
+                // this.in_action_frame.broken が 12 ~ 9 ... 壊れた岩の写真 1 枚目
+                // this.in_action_frame.broken が  8 ~ 5 ... 壊れた岩の写真 2 枚目
+                // this.in_action_frame.broken が  4 ~ 1 ... 壊れた岩の写真 3 枚目
+
+                const num_of_broken_rock_img = rock_images.length - 1; // 全写真 - 壊れる前の岩の写真 1 枚
+                const index = num_of_broken_rock_img + 1 - Math.ceil(this.in_action_frame.broken * (num_of_broken_rock_img / INITIAL_IN_ACTION_FRAME.broken));
+                return rock_images[index];
+            }
+
+            rock_img = get_broken_rock_img(this.img.rock);
         }
         else {
             rock_img = this.img.rock[0];
