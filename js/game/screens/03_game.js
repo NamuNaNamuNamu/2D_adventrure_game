@@ -40,6 +40,7 @@ export function game(global_info){
     );
 
     let enemies = new ExpandedArray(); // 現在プレイヤーがいるマップに生存している敵キャラ (倒したり、マップ移動したら、ここからいなくなる)
+    let weapons = new ExpandedArray(); // 現在プレイヤーがいるマップに存在している敵の攻撃 (例: 岩攻撃)
 
     let main_loop = setInterval(function(){
         // 1 タイルの canvas 上でのサイズ。 NOTE: メインループの中で定義しないと、画面サイズ更新時に更新されない。
@@ -61,7 +62,7 @@ export function game(global_info){
             // 敵キャラの操作を決定
             enemy.control(player);
             // 敵キャラの動きを処理する
-            enemy.action(player, enemies, TILE_SIZE_IN_CANVAS);
+            enemy.action(player, enemies, TILE_SIZE_IN_CANVAS, weapons); // TODO: weapons は enemies の後に置く。全攻撃を各敵クラスのインスタンス変数から置き換えた後に行う。
             // 敵キャラを描画する
             enemy.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
         }
@@ -72,6 +73,12 @@ export function game(global_info){
         player.action(global_info.img, enemies);
         // 描画する
         player.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
+
+        for(let weapon of weapons){
+            weapon.move(weapons);
+            weapon.attack(player, TILE_SIZE_IN_CANVAS);
+            weapon.draw(global_info.canvas, global_info.context, TILE_SIZE_IN_CANVAS);
+        }
 
         // Shift ボタンが押されたら、スタート画面に遷移
         if(global_info.key.is_shift_pressed){

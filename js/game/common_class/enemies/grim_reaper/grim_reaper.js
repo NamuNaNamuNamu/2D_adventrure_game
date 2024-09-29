@@ -7,7 +7,6 @@ import { face_the_direction_of_the_player_character } from "./methods/01_control
 
 // 02_action
 import { move } from "../../z0_common_methods/02_action/move.js";
-import { move_magic_bullet } from "./methods/02_action/move_magic_bullet.js";
 import { attack } from "../../z0_common_methods/02_action/attack.js";
 import { attack_by_magic_bullet } from "./methods/02_action/attack_by_magic_bullet.js";
 import { damaged } from "../../z0_common_methods/02_action/damaged.js";
@@ -15,7 +14,6 @@ import { is_damaged } from "../../z0_common_methods/02_action/damaged/is_damaged
 import { is_blown_away } from "../../z0_common_methods/02_action/damaged/is_blown_away.js";
 
 // 03_draw
-import { draw_magic_bullet } from "./methods/03_draw/draw_magic_bullet.js";
 import { draw_small_enemy } from "../../z0_common_methods/03_draw/draw_small_enemy.js";
 
 // その他
@@ -145,14 +143,13 @@ export class GrimReaper{
 
     // 敵キャラを行動させる
     // game.js の メインループから呼び出される
-    action(player, enemies, tile_size_in_canvas){
+    action(player, enemies, tile_size_in_canvas, weapons){ // TODO: weapons は enemies の後に置く。全攻撃を各敵クラスのインスタンス変数から置き換えた後に行う。
         // 移動系
         this.move(ANIMATION_ORDER);
-        this.move_magic_bullet();
 
         // 攻撃系
         this.attack(player, tile_size_in_canvas);
-        this.attack_by_magic_bullet(player, tile_size_in_canvas);
+        this.attack_by_magic_bullet(player, weapons);
 
         // 被ダメージ系
         this.damaged(player, enemies, tile_size_in_canvas, MAP_CHIP_WHICH_CANNOT_MOVE_ON);
@@ -161,7 +158,6 @@ export class GrimReaper{
     // 描画処理
     // game.js の メインループから呼び出される
     draw(canvas, context, tile_size_in_canvas){
-        this.draw_magic_bullet(canvas, context, tile_size_in_canvas);
         this.draw_small_enemy(canvas, context, tile_size_in_canvas, ANIMATION_ORDER);
     }
 }
@@ -173,7 +169,6 @@ include(GrimReaper, face_the_direction_of_the_player_character);
 
 // 02_action
 include(GrimReaper, move);
-include(GrimReaper, move_magic_bullet);
 include(GrimReaper, attack);
 include(GrimReaper, attack_by_magic_bullet);
 include(GrimReaper, damaged);
@@ -181,7 +176,6 @@ include(GrimReaper, is_damaged);
 include(GrimReaper, is_blown_away);
 
 // 03_draw
-include(GrimReaper, draw_magic_bullet);
 include(GrimReaper, draw_small_enemy);
 
 // その他
