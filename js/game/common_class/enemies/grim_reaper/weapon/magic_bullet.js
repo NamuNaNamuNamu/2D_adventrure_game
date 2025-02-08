@@ -1,7 +1,8 @@
+/* しにがみが使う魔法弾クラス */
+
 import { is_overlapping_with } from "../../../z0_common_methods/is_overlapping_with.js";
 import { include } from "../../../../../global_function/include.js";
 
-/* しにがみが使う魔法弾クラス */
 const MAGIC_BULLET_SPEED_COEFFICIENT = 0.60;    // 魔法弾のスピードの係数
 const HIT_BOX = {   // 当たり判定 (タイル基準。すなわち 1 ならタイル1枚分)
     width: 0.5,    // 横幅
@@ -9,17 +10,18 @@ const HIT_BOX = {   // 当たり判定 (タイル基準。すなわち 1 なら�
 }
 
 export class MagicBullet{
-    constructor(x, y, direction, img){
-        this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 矢の画像の中心の座標とする
-        this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 矢の画像の中心の座標とする
-        this.width = HIT_BOX.width;    // 魔法弾の当たり判定の横幅
-        this.height = HIT_BOX.height;  // 魔法弾の当たり判定の縦幅
+    constructor(x, y, direction, img, atk){
+        this.x = x;                         // x 座標(タイル基準 = 一番左が 0, 一番右が 16), 魔法弾の画像の中心の座標とする
+        this.y = y;                         // y 座標(タイル基準 = 一番上が 0, 一番下が 16), 魔法弾の画像の中心の座標とする
+        this.width = HIT_BOX.width;         // 魔法弾の当たり判定の横幅
+        this.height = HIT_BOX.height;       // 魔法弾の当たり判定の縦幅
         this.direction = direction;         // 魔法弾の飛ぶ向き(0: 背面, 1: 正面, 2: 左, 3: 右)
         this.img = img;                     // 写真
+        this.atk = atk;
     }
 
     // 魔法弾の移動処理
-    move(magic_bullets){
+    move(weapons){
         if(this.direction == 0) this.y = Math.round((this.y - MINIMUM_STEP * MAGIC_BULLET_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 1) this.y = Math.round((this.y + MINIMUM_STEP * MAGIC_BULLET_SPEED_COEFFICIENT) * 100) / 100;
         if(this.direction == 2) this.x = Math.round((this.x - MINIMUM_STEP * MAGIC_BULLET_SPEED_COEFFICIENT) * 100) / 100;
@@ -32,14 +34,15 @@ export class MagicBullet{
         const outside_of_the_right_edge  = this.x > FIELD_SIZE_IN_SCREEN + HIT_BOX.width;
         const on_the_outside_of_the_map  = (outside_of_the_top_edge || outside_of_the_bottom_edge || outside_of_the_left_edge || outside_of_the_right_edge);
 
-        if(on_the_outside_of_the_map){
-            magic_bullets.delete(this);
-         }
+        if(on_the_outside_of_the_map) {
+            weapons.delete(this);
+        }
     }
 
     // 攻撃処理
-    attack(player, damage, tile_size_in_canvas){
+    attack(player, tile_size_in_canvas){
         if(this.is_overlapping_with(player, tile_size_in_canvas)){
+            const damage = this.atk;
             const INVINCIBLE_FRAME = 30;
             player.is_damaged(damage, INVINCIBLE_FRAME);
         }

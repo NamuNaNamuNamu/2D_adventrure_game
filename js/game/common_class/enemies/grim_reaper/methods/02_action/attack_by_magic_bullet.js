@@ -10,12 +10,7 @@ const COOL_TIME = { // それぞれの行動のクールタイム
 }
 const MAGIC_BULLET_ATK_COEFFICIENT = 0.5;   // 直接、身体が触れる攻撃を 1 としたときの、魔法弾の攻撃倍率。atk に 掛け算する。
 
-export function attack_by_magic_bullet(player, tile_size_in_canvas){
-    // 魔法弾の攻撃判定
-    for(let magic_bullet of this.magic_bullets){
-        magic_bullet.attack(player, this.status.atk * MAGIC_BULLET_ATK_COEFFICIENT, tile_size_in_canvas);
-    }
-
+export function attack_by_magic_bullet(player, weapons){
     // 向いている方向にプレイヤーキャラが通ったら、その方向に弾を発射する
     // まず、プレイヤーキャラのいる位置 から 自分のいる位置を引く
     // TODO: 向いている方向にプレイヤーキャラが通ったら true になるユーティリティメソッドを実装して、それを使うようにしたい。
@@ -32,8 +27,8 @@ export function attack_by_magic_bullet(player, tile_size_in_canvas){
             this.in_action_frame.attack = COOL_TIME.attack;
 
             // 魔法弾を追加
-            let magic_bullet = new MagicBullet(this.x, this.y, this.direction, this.img.magic_bullet);
-            this.magic_bullets.push(magic_bullet);
+            let magic_bullet = new MagicBullet(this.x, this.y, this.direction, this.img.magic_bullet, this.status.atk * MAGIC_BULLET_ATK_COEFFICIENT);
+            weapons.push(magic_bullet);
         }
     }
 

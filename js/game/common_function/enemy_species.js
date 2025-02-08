@@ -20,6 +20,12 @@ export function enemy_species(){
             hp: 1,
             attack: 15,
         },
+        block_monster: {
+            id: 4,
+            name: "ブロックモンスター",
+            hp: 8,
+            attack: 20,            
+        },
         black_dragon: {
             id: 90,
             name: "ブラックドラゴン",
